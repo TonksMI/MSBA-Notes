@@ -1,0 +1,21 @@
+Rough draft outline
+
+Intro
+
+how I got to data
+
+
+Rough draft:
+
+Hi my name is Matthew Tonks. 
+
+My journey with data started with my first year at Chapman. I was a computer science major with beliefs of building some app or developing code somewhere that would make going to school worth it. My first few classes kept me in check and working through the first two years of projects game me the confidence that I could takle any problem.
+
+This lead to my first opportunity outside of school as an intern at Melissa Data. This opened my eyes to a new world of problems waiting to be solved. At the time data did not mean much to me but being able to tackle a new world of problems gave me a feeling of fulfilment that matched when I succeeded at completing the most difficult projects. At the time I missed the nuanced value in what I was working on.
+
+From there I started my Analytics minor and tackled more complex problems. After learning basic modeling and sample applications I came up with my first own problem to solve. I created 2 sets of models to identify cashflow between any Real Estate property and calculated the cost of a mortgage on the market price and compared it with the predicted rental income. I extracted data from Redfin and Craigslist to create the models and was able to rank houses based on a basic profit margin.
+
+Learning the processes of extracting and cleaning data to produce actual results led me to find work in the field of data which started at a small consulting firm. My time there was a headache of managing expectations while my boss "over valued" my experience level to the customers. This lead to many scenarios of learn fast or drown trying. The value of clean data, clear requirements and appropriate training led to a different understanding that I would have never predicted. 
+
+The trainings provided by my work taught me about data govenrnance and how it's value comes into play when the whole data ecosystem comes to play. It opened my eyes to what I missed understanding in both school and at my internship. Seeing data with Data Quality integrated into the platform and combining it from multiple sources using a pipeline which is tracking the data from the very begining to the end.
+

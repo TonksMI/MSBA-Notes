@@ -1,0 +1,6 @@
+class task
+1 speak on the phone
+2 meaning ful job
+3 smart phone
+4 check oil
+5 commit taxes
