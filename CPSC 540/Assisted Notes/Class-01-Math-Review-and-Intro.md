@@ -10,17 +10,13 @@ Comprehensive review of essential mathematical concepts: linear algebra, probabi
 ### Vector Spaces and Operations
 
 #### Vector Basics
-A vector **v** in ℝⁿ represents a point or direction in n-dimensional space:
-```
-v = [v₁, v₂, ..., vₙ]ᵀ
-```
+A vector $\mathbf{v}$ in $\mathbb{R}^n$ represents a point or direction in n-dimensional space:
+$$\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix}$$
 
 **Key Operations:**
-```
-Addition:     u + v = [u₁+v₁, u₂+v₂, ..., uₙ+vₙ]ᵀ
-Scalar mult:  cv = [cv₁, cv₂, ..., cvₙ]ᵀ
-Dot product:  u·v = Σᵢ uᵢvᵢ
-```
+- **Addition**: $\mathbf{u} + \mathbf{v} = \begin{bmatrix} u_1+v_1 \\ u_2+v_2 \\ \vdots \\ u_n+v_n \end{bmatrix}$
+- **Scalar multiplication**: $c\mathbf{v} = \begin{bmatrix} cv_1 \\ cv_2 \\ \vdots \\ cv_n \end{bmatrix}$
+- **Dot product**: $\mathbf{u} \cdot \mathbf{v} = \sum_{i=1}^{n} u_i v_i$
 
 **Example in ML Context:**
 ```
@@ -31,18 +27,14 @@ Prediction:     ŷ = w·x = 0.1(25) + 0.0001(50000) + 0.5(16) = 15.5
 
 #### Vector Norms
 **L2 Norm (Euclidean length):**
-```
-||v||₂ = √(v₁² + v₂² + ... + vₙ²) = √(v·v)
-```
+$$\|\mathbf{v}\|_2 = \sqrt{v_1^2 + v_2^2 + \cdots + v_n^2} = \sqrt{\mathbf{v} \cdot \mathbf{v}}$$
 
 **L1 Norm (Manhattan distance):**
-```
-||v||₁ = |v₁| + |v₂| + ... + |vₙ|
-```
+$$\|\mathbf{v}\|_1 = |v_1| + |v_2| + \cdots + |v_n|$$
 
 **ML Application:** Regularization
-- **Ridge regression**: Minimize ||y - Xβ||₂² + λ||β||₂²
-- **Lasso regression**: Minimize ||y - Xβ||₂² + λ||β||₁
+- **Ridge regression**: Minimize $\|\mathbf{y} - \mathbf{X}\boldsymbol{\beta}\|_2^2 + \lambda\|\boldsymbol{\beta}\|_2^2$
+- **Lasso regression**: Minimize $\|\mathbf{y} - \mathbf{X}\boldsymbol{\beta}\|_2^2 + \lambda\|\boldsymbol{\beta}\|_1$
 
 ### Matrix Operations
 

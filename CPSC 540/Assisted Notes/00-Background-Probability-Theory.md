@@ -6,9 +6,9 @@ This document covers essential probability concepts needed for CPSC 540. Probabi
 ## 1. Basic Probability Concepts
 
 ### Sample Space and Events
-- **Sample Space (Ω)**: Set of all possible outcomes
-- **Event (A)**: Subset of sample space
-- **Probability P(A)**: Measure of likelihood, 0 ≤ P(A) ≤ 1
+- **Sample Space ($\Omega$)**: Set of all possible outcomes
+- **Event ($A$)**: Subset of sample space
+- **Probability $P(A)$**: Measure of likelihood, $0 \leq P(A) \leq 1$
 
 **Example: Coin Flip**
 ```
@@ -18,26 +18,22 @@ P(A) = 0.5
 ```
 
 ### Axioms of Probability
-1. **Non-negativity**: P(A) ≥ 0 for all events A
-2. **Normalization**: P(Ω) = 1
-3. **Additivity**: If A∩B = ∅, then P(A∪B) = P(A) + P(B)
+1. **Non-negativity**: $P(A) \geq 0$ for all events $A$
+2. **Normalization**: $P(\Omega) = 1$
+3. **Additivity**: If $A \cap B = \emptyset$, then $P(A \cup B) = P(A) + P(B)$
 
 ## 2. Conditional Probability and Independence
 
 ### Conditional Probability
-The probability of A given B has occurred:
-```
-P(A|B) = P(A∩B)/P(B), provided P(B) > 0
-```
+The probability of $A$ given $B$ has occurred:
+$$P(A|B) = \frac{P(A \cap B)}{P(B)}, \quad \text{provided } P(B) > 0$$
 
 **Intuition**: Restrict sample space to B, then find probability of A within that restricted space.
 
 ### Independence
-Events A and B are independent if:
-```
-P(A∩B) = P(A)P(B)
-```
-Equivalently: P(A|B) = P(A)
+Events $A$ and $B$ are independent if:
+$$P(A \cap B) = P(A)P(B)$$
+Equivalently: $P(A|B) = P(A)$
 
 **Example: Two Dice**
 ```
@@ -50,21 +46,17 @@ P(A∩B) = 1/36 = (1/6)(1/6) = P(A)P(B)
 ## 3. Law of Total Probability and Bayes' Theorem
 
 ### Law of Total Probability
-If B₁, B₂, ..., Bₙ partition the sample space:
-```
-P(A) = Σᵢ P(A|Bᵢ)P(Bᵢ)
-```
+If $B_1, B_2, \ldots, B_n$ partition the sample space:
+$$P(A) = \sum_{i=1}^{n} P(A|B_i)P(B_i)$$
 
 ### Bayes' Theorem
-```
-P(B|A) = P(A|B)P(B)/P(A)
-```
+$$P(B|A) = \frac{P(A|B)P(B)}{P(A)}$$
 
 **Components:**
-- P(B|A): Posterior probability
-- P(A|B): Likelihood
-- P(B): Prior probability
-- P(A): Evidence (marginal likelihood)
+- $P(B|A)$: Posterior probability
+- $P(A|B)$: Likelihood
+- $P(B)$: Prior probability
+- $P(A)$: Evidence (marginal likelihood)
 
 **Medical Testing Example:**
 ```
@@ -80,71 +72,57 @@ P(D|+) = P(+|D)P(D) / [P(+|D)P(D) + P(+|¬D)P(¬D)]
 ## 4. Random Variables
 
 ### Definition
-A random variable X is a function from the sample space to real numbers.
+A random variable $X$ is a function from the sample space to real numbers.
 
 ### Types
-- **Discrete**: X takes countable values (dice, coin flips)
-- **Continuous**: X takes uncountable values (height, weight)
+- **Discrete**: $X$ takes countable values (dice, coin flips)
+- **Continuous**: $X$ takes uncountable values (height, weight)
 
 ### Probability Mass Function (PMF) - Discrete
-```
-pₓ(x) = P(X = x)
-```
+$$p_X(x) = P(X = x)$$
 
 **Properties:**
-- pₓ(x) ≥ 0 for all x
-- Σₓ pₓ(x) = 1
+- $p_X(x) \geq 0$ for all $x$
+- $\sum_x p_X(x) = 1$
 
 ### Probability Density Function (PDF) - Continuous
-```
-P(a ≤ X ≤ b) = ∫ₐᵇ fₓ(x)dx
-```
+$$P(a \leq X \leq b) = \int_a^b f_X(x)\,dx$$
 
 **Properties:**
-- fₓ(x) ≥ 0 for all x
-- ∫₋∞^∞ fₓ(x)dx = 1
+- $f_X(x) \geq 0$ for all $x$
+- $\int_{-\infty}^{\infty} f_X(x)\,dx = 1$
 
 ### Cumulative Distribution Function (CDF)
-```
-Fₓ(x) = P(X ≤ x)
-```
+$$F_X(x) = P(X \leq x)$$
 
 **Properties:**
-- 0 ≤ Fₓ(x) ≤ 1
-- Fₓ is non-decreasing
-- For continuous X: fₓ(x) = dFₓ(x)/dx
+- $0 \leq F_X(x) \leq 1$
+- $F_X$ is non-decreasing
+- For continuous $X$: $f_X(x) = \frac{dF_X(x)}{dx}$
 
 ## 5. Expectation and Moments
 
 ### Expected Value (Mean)
 **Discrete:**
-```
-E[X] = μ = Σₓ x·pₓ(x)
-```
+$$E[X] = \mu = \sum_x x \cdot p_X(x)$$
 
 **Continuous:**
-```
-E[X] = μ = ∫₋∞^∞ x·fₓ(x)dx
-```
+$$E[X] = \mu = \int_{-\infty}^{\infty} x \cdot f_X(x)\,dx$$
 
 ### Properties of Expectation
-1. **Linearity**: E[aX + bY] = aE[X] + bE[Y]
-2. **Constant**: E[c] = c
-3. **Independence**: If X⊥Y, then E[XY] = E[X]E[Y]
+1. **Linearity**: $E[aX + bY] = aE[X] + bE[Y]$
+2. **Constant**: $E[c] = c$
+3. **Independence**: If $X \perp Y$, then $E[XY] = E[X]E[Y]$
 
 ### Variance
-```
-Var(X) = E[(X - μ)²] = E[X²] - (E[X])²
-```
+$$\text{Var}(X) = E[(X - \mu)^2] = E[X^2] - (E[X])^2$$
 
 **Properties:**
-- Var(aX + b) = a²Var(X)
-- If X⊥Y: Var(X + Y) = Var(X) + Var(Y)
+- $\text{Var}(aX + b) = a^2\text{Var}(X)$
+- If $X \perp Y$: $\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y)$
 
 ### Standard Deviation
-```
-σ = √Var(X)
-```
+$$\sigma = \sqrt{\text{Var}(X)}$$
 
 ### Higher Moments
 - **Third moment (Skewness)**: E[(X-μ)³]/σ³

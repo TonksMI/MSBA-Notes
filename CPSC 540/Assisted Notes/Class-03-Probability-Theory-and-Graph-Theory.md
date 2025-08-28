@@ -13,12 +13,12 @@ Deep dive into probability theory applications and introduction to graph theory,
 #### Discrete Joint Distributions
 For discrete random variables X and Y:
 ```
-Joint PMF: p(x,y) = P(X = x, Y = y)
+Joint PMF: $p(x,y) = P(X = x, Y = y)$
 ```
 
 **Properties:**
-- p(x,y) ≥ 0 for all x,y
-- ΣₓΣᵧ p(x,y) = 1
+- $p(x,y) \geq 0$ for all $x,y$
+- $\sum_x \sum_y p(x,y) = 1$
 
 **Example: Two Dice**
 ```

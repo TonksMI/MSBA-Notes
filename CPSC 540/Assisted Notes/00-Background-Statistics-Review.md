@@ -18,14 +18,12 @@ Statistical methods are the foundation of data-driven decision making in modern 
 ### Measures of Central Tendency
 
 #### Mean (Arithmetic Average)
-```
-x̄ = (1/n) Σᵢ xᵢ
-```
+$$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
 
 **Properties:**
 - Sensitive to outliers
 - Minimizes sum of squared deviations
-- E[X̄] = μ (unbiased estimator)
+- $E[\bar{X}] = \mu$ (unbiased estimator)
 
 #### Median
 Middle value when data is ordered.
@@ -91,14 +89,10 @@ std_b = np.std(location_b)    # 2.18 (inconsistent service)
 
 #### Variance
 **Population variance:**
-```
-σ² = (1/N) Σᵢ (xᵢ - μ)²
-```
+$$\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2$$
 
 **Sample variance:**
-```
-s² = (1/(n-1)) Σᵢ (xᵢ - x̄)²
-```
+$$s^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2$$
 
 **Note:** Divide by (n-1) for sample variance (Bessel's correction) to get unbiased estimator.
 

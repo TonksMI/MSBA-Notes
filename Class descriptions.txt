@@ -1,0 +1,17 @@
+BUS 659
+Machine Learning for Managers
+
+Prerequisite, BUS 603 or BUS 609. This course builds a foundation of machine learning and statistical models, focusing on knowing when and how these models can contribute to business objectives. Topics include uncertainty and bias-variance trade off, linear regression, classification models such as logistic regression, regularization models (Lasso and Ridge), decision trees and random forest, as well as interpretable machine learning and data management in SQL. Students will learn to apply these models in R or Python, but the course assumes no prior coding experience. Letter grade. (Offered fall semester.) 3 credits
+
+BUS 671
+Managing Data for Analysis
+Prerequisite, admittance to the MSBA program, or instructor consent required. Modern data storage systems provide a wealth of data, but accessing these systems requires specialized tools and an understanding of how they can impact a business. This course covers basic database skills around extracting, transforming, and loading data. Students will learn SQL for tabular data storage and will also cover "NoSQL" storage variants. Letter grade. (Offered every year.) 3 credits
+
+BUS 672
+Data Visualization for Business
+Prerequisite, admittance to the MSBA program, or instructor consent required. This course will utilize data visualization techniques to build rich and vivid data-driven output for business consumption. This course will cover data visualization theories and focus on techniques using a variety of tools, including data dashboards (Tableau), modern plotting, advanced plotting and visualization (using libraries such as ggplot, seaborn, matplotlib, plotly, etc.).  Additional focus will be placed on the managerial aspects of presenting data, including understanding audience receptivity to data and mapping to necessary business outcomes. It will also allow students to use advanced data visualization tools to translate information insights into understandable business outcomes. Letter grade. (Offered every year.) 3 credits
+
+CPSC 540
+Statistical Machine Learning I
+This course covers a range of topics in Statistical Machine Learning including the Mathematical foundations of machine learning, data preprocessing (including scaling, dimensionality reduction, and imputation), Bayesian and Frequentist inference (including particular-use models which may include Generalized Linear Models, Generalized Additive Models, Mixed Effect Models, Survival Analysis, and Item Response Theory), longitudinal data models (including repeated measures and time series), and ethical considerations that arise through the application of these topics. This course assumes students have completed undergraduate-level coursework in probability, statistics, linear algebra, and computer programming. Letter grade. (Offered as needed.) 3 credits
+

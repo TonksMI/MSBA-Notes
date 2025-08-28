@@ -24,9 +24,7 @@ Introduction to Generalized Linear Models (GLMs), extending linear regression to
 
 ### Definition
 A distribution is in the exponential family if its PDF/PMF can be written as:
-```
-f(y|θ) = exp{[yθ - b(θ)]/a(φ) + c(y,φ)}
-```
+$$f(y|\theta) = \exp\left\{\frac{y\theta - b(\theta)}{a(\phi)} + c(y,\phi)\right\}$$
 
 Where:
 - **θ**: Natural/canonical parameter

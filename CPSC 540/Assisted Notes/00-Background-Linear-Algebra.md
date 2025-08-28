@@ -9,41 +9,22 @@ This document covers essential linear algebra concepts needed for CPSC 540: Stat
 A vector is an ordered collection of numbers (scalars).
 
 **Column Vector:**
-```
-v = [v₁]
-    [v₂]
-    [⋮ ]
-    [vₙ]
-```
+$$\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix}$$
 
 **Row Vector:**
-```
-v^T = [v₁, v₂, ..., vₙ]
-```
+$$\mathbf{v}^T = \begin{bmatrix} v_1 & v_2 & \cdots & v_n \end{bmatrix}$$
 
 ### Vector Operations
 
 #### Addition
-```
-a + b = [a₁ + b₁]
-        [a₂ + b₂]
-        [⋮      ]
-        [aₙ + bₙ]
-```
+$$\mathbf{a} + \mathbf{b} = \begin{bmatrix} a_1 + b_1 \\ a_2 + b_2 \\ \vdots \\ a_n + b_n \end{bmatrix}$$
 
 #### Scalar Multiplication
-```
-ca = [ca₁]
-     [ca₂]
-     [⋮  ]
-     [caₙ]
-```
+$$c\mathbf{a} = \begin{bmatrix} ca_1 \\ ca_2 \\ \vdots \\ ca_n \end{bmatrix}$$
 
 #### Dot Product (Inner Product)
-For vectors a and b:
-```
-a · b = a^T b = Σᵢ aᵢbᵢ = a₁b₁ + a₂b₂ + ... + aₙbₙ
-```
+For vectors $\mathbf{a}$ and $\mathbf{b}$:
+$$\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^T \mathbf{b} = \sum_{i=1}^{n} a_i b_i = a_1 b_1 + a_2 b_2 + \cdots + a_n b_n$$
 
 **Example:**
 ```
@@ -68,34 +49,20 @@ a · b = 2×4 + 3×1 + 1×2 = 8 + 3 + 2 = 13
 ### Definition
 A matrix is a rectangular array of numbers arranged in rows and columns.
 
-```
-A = [a₁₁  a₁₂  ...  a₁ₙ]
-    [a₂₁  a₂₂  ...  a₂ₙ]
-    [⋮    ⋮    ⋱   ⋮  ]
-    [aₘ₁  aₘ₂  ...  aₘₙ]
-```
+$$\mathbf{A} = \begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \end{bmatrix}$$
 
 ### Matrix Operations
 
 #### Addition
 Matrices of the same dimensions can be added element-wise:
-```
-C = A + B where cᵢⱼ = aᵢⱼ + bᵢⱼ
-```
+$$\mathbf{C} = \mathbf{A} + \mathbf{B} \quad \text{where} \quad c_{ij} = a_{ij} + b_{ij}$$
 
 #### Scalar Multiplication
-```
-cA = [ca₁₁  ca₁₂  ...  ca₁ₙ]
-     [ca₂₁  ca₂₂  ...  ca₂ₙ]
-     [⋮     ⋮     ⋱    ⋮   ]
-     [caₘ₁  caₘ₂  ...  caₘₙ]
-```
+$$c\mathbf{A} = \begin{bmatrix} ca_{11} & ca_{12} & \cdots & ca_{1n} \\ ca_{21} & ca_{22} & \cdots & ca_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ ca_{m1} & ca_{m2} & \cdots & ca_{mn} \end{bmatrix}$$
 
 #### Matrix Multiplication
-For A (m×p) and B (p×n), the product C = AB is (m×n):
-```
-cᵢⱼ = Σₖ aᵢₖbₖⱼ
-```
+For $\mathbf{A}$ $(m \times p)$ and $\mathbf{B}$ $(p \times n)$, the product $\mathbf{C} = \mathbf{AB}$ is $(m \times n)$:
+$$c_{ij} = \sum_{k=1}^{p} a_{ik}b_{kj}$$
 
 **Example:**
 ```
@@ -115,34 +82,21 @@ If A = [1  2  3]  then A^T = [1  4]
 ```
 
 #### Matrix Inverse
-For a square matrix A, the inverse A⁻¹ satisfies:
-```
-AA⁻¹ = A⁻¹A = I
-```
+For a square matrix $\mathbf{A}$, the inverse $\mathbf{A}^{-1}$ satisfies:
+$$\mathbf{AA}^{-1} = \mathbf{A}^{-1}\mathbf{A} = \mathbf{I}$$
 
-For a 2×2 matrix:
-```
-A = [a  b]    A⁻¹ = 1/(ad-bc) [ d  -b]
-    [c  d]                     [-c   a]
-```
+For a $2 \times 2$ matrix:
+$$\mathbf{A} = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \quad \mathbf{A}^{-1} = \frac{1}{ad-bc} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
 
 ## 3. Special Matrices
 
 ### Identity Matrix
-The identity matrix I has 1s on the diagonal and 0s elsewhere:
-```
-I = [1  0  0]
-    [0  1  0]
-    [0  0  1]
-```
+The identity matrix $\mathbf{I}$ has 1s on the diagonal and 0s elsewhere:
+$$\mathbf{I} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 
 ### Diagonal Matrix
 A diagonal matrix has non-zero elements only on the main diagonal:
-```
-D = [d₁  0   0 ]
-    [0   d₂  0 ]
-    [0   0   d₃]
-```
+$$\mathbf{D} = \begin{bmatrix} d_1 & 0 & 0 \\ 0 & d_2 & 0 \\ 0 & 0 & d_3 \end{bmatrix}$$
 
 ### Symmetric Matrix
 A matrix where A = A^T:
@@ -155,11 +109,9 @@ A = [1  2  3]
 ## 4. Linear Independence and Rank
 
 ### Linear Independence
-Vectors v₁, v₂, ..., vₖ are linearly independent if:
-```
-c₁v₁ + c₂v₂ + ... + cₖvₖ = 0
-```
-only when c₁ = c₂ = ... = cₖ = 0.
+Vectors $\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_k$ are linearly independent if:
+$$c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_k\mathbf{v}_k = \mathbf{0}$$
+only when $c_1 = c_2 = \cdots = c_k = 0$.
 
 ### Rank
 The rank of a matrix is the maximum number of linearly independent rows (or columns).
@@ -172,20 +124,16 @@ The rank of a matrix is the maximum number of linearly independent rows (or colu
 ## 5. Eigenvalues and Eigenvectors
 
 ### Definition
-For a square matrix A, if there exists a non-zero vector v and scalar λ such that:
-```
-Av = λv
-```
-Then λ is an eigenvalue and v is the corresponding eigenvector.
+For a square matrix $\mathbf{A}$, if there exists a non-zero vector $\mathbf{v}$ and scalar $\lambda$ such that:
+$$\mathbf{Av} = \lambda\mathbf{v}$$
+Then $\lambda$ is an eigenvalue and $\mathbf{v}$ is the corresponding eigenvector.
 
 ### Geometric Interpretation
 When A acts on eigenvector v, it only stretches or shrinks v by factor λ, without changing direction.
 
 ### Computing Eigenvalues
 Solve the characteristic equation:
-```
-det(A - λI) = 0
-```
+$$\det(\mathbf{A} - \lambda\mathbf{I}) = 0$$
 
 **Example for 2×2 matrix:**
 ```
@@ -201,17 +149,13 @@ det([4-λ   1  ]) = (4-λ)(3-λ) - 2 = λ² - 7λ + 10 = 0
 ## 6. Matrix Decompositions
 
 ### Eigenvalue Decomposition
-For a symmetric matrix A:
-```
-A = QΛQ^T
-```
-where Q contains eigenvectors and Λ is diagonal matrix of eigenvalues.
+For a symmetric matrix $\mathbf{A}$:
+$$\mathbf{A} = \mathbf{Q}\boldsymbol{\Lambda}\mathbf{Q}^T$$
+where $\mathbf{Q}$ contains eigenvectors and $\boldsymbol{\Lambda}$ is diagonal matrix of eigenvalues.
 
 ### Singular Value Decomposition (SVD)
-For any matrix A:
-```
-A = UΣV^T
-```
+For any matrix $\mathbf{A}$:
+$$\mathbf{A} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^T$$
 where:
 - U: left singular vectors (orthogonal)
 - Σ: diagonal matrix of singular values
@@ -237,10 +181,8 @@ x = [x₁]    A = [2  1]    x^TAx = 2x₁² + 2x₁x₂ + 3x₂²
 ```
 
 ### Positive Definite Matrices
-A symmetric matrix A is positive definite if:
-```
-x^TAx > 0 for all x ≠ 0
-```
+A symmetric matrix $\mathbf{A}$ is positive definite if:
+$$\mathbf{x}^T\mathbf{Ax} > 0 \quad \text{for all } \mathbf{x} \neq \mathbf{0}$$
 
 **Properties:**
 - All eigenvalues > 0
@@ -251,21 +193,15 @@ x^TAx > 0 for all x ≠ 0
 
 ### Linear Regression
 The normal equation:
-```
-β = (X^TX)⁻¹X^Ty
-```
+$$\boldsymbol{\beta} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$$
 
 ### Principal Component Analysis (PCA)
 Find eigenvectors of covariance matrix:
-```
-C = (1/n)X^TX
-```
+$$\mathbf{C} = \frac{1}{n}\mathbf{X}^T\mathbf{X}$$
 
 ### Least Squares Solution
-For overdetermined system Ax = b:
-```
-x = (A^TA)⁻¹A^Tb
-```
+For overdetermined system $\mathbf{Ax} = \mathbf{b}$:
+$$\mathbf{x} = (\mathbf{A}^T\mathbf{A})^{-1}\mathbf{A}^T\mathbf{b}$$
 
 ## Deep Dive: Why Linear Algebra Matters in the Workplace
 

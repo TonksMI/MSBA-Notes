@@ -26,9 +26,7 @@ For each unit i and treatment t:
 **The Fundamental Problem:** We can only observe one potential outcome for each unit.
 
 **Average Treatment Effect (ATE):**
-```
-ATE = E[Y_i(1) - Y_i(0)] = E[Y_i(1)] - E[Y_i(0)]
-```
+$$\text{ATE} = E[Y_i(1) - Y_i(0)] = E[Y_i(1)] - E[Y_i(0)]$$
 
 ## Causal Graphs and DAGs
 

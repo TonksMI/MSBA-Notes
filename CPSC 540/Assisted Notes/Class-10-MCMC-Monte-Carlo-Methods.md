@@ -10,11 +10,9 @@ Introduction to Monte Carlo methods and Markov Chain Monte Carlo (MCMC) for Baye
 
 ### Bayesian Inference Challenge
 In Bayesian inference, we want the posterior distribution:
-```
-p(θ|y) = p(y|θ)p(θ) / p(y)
-```
+$$p(\theta|y) = \frac{p(y|\theta)p(\theta)}{p(y)}$$
 
-**The problem:** p(y) = ∫ p(y|θ)p(θ)dθ is often intractable.
+**The problem:** $p(y) = \int p(y|\theta)p(\theta)d\theta$ is often intractable.
 
 **Examples where integration is difficult:**
 - High-dimensional parameter spaces
