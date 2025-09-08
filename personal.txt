@@ -1,0 +1,41 @@
+Hi, my name is Matthew Tonks. Throughout my career, I realized that the more I succeed with technology, the less I need to rely on it. This created the opportunity to ask better questions and to have the courage to search for the answers when I do not have them.
+
+(pause)
+
+My first role out of college was at a small consulting firm, where school experiences alone could not prepare me for the realities of client work. My experience all started with an opportunity at a small firm doing Data Pipeline implementations for customers. My first months were hands on training to learn a tool called Informatica. The process of learning this tool was as hard as my most difficult classes during college. 
+
+(pause)
+
+As training was wrapping up, I was starting to prepare for my interview with the manager of my first project and reworking my resume with the new skills I learned. I was being passed between both the Owner and my team manager to get ready for any question that would come our way. 
+
+(pause)
+
+A huge red flag appeared during one of these meetings. I got to see the resume that was being sent to the client. It described someone that has been working for years at a high level specializing in the tools I was being trained in. I was going to be sent head first into a project with barely 2 months of training on a tool that I did not know existed until before I joined.
+
+(pause)
+
+I had a decision to make about working here. I wanted the experience desperately and it was my first job. I wanted to succeed more than anything and thought this would be the perfect experience to do so.
+
+(pause)
+
+Pressure makes diamonds.
+
+(pause)
+
+I started working on my first project. It was an implementation to create a new framework to process multiple EDI file formats. The team we were working with had been using the firms consultants prior to me joining and I was added once this project was approved.
+
+(pause)
+
+The continuing team was 2 people at that time. A miracle worker of a Project Manager and a QA worker with a complete lack of qualifications. Their was a developer before but the client was not happy with that consultant and was removed from the project. This just meant they had high standards that I needed to meet consistantly.
+
+Soon after starting and the requirements were defined, I started the most difficult time of my professional life. We started true development of the framework. Everything was against us completing the project. We were limited by the amount of hours we could work on a project and that was cut by useless meetings that were sprinkled throughout the week.
+
+On the client side we had daily standups that took an hour due to the disfunction of the team we were working with. Weekly planning meetings to go through everything we have been working on. And knowledge sharing sessions to learn more about the process and how to cutover from the old process to the new one. On the firms side, we had the exact same meetings. On a "good" 40 hour work week, we at minimum had 24 hours of meetings.
+
+Then the deadlines started hitting. Our first deadline was approaching we had another developer added to the projecct, and we had to keep the client happy. We were stuck with a completely unusable demo 1 week away from our presentation. I had to work 16 hour days just to be able to show the process working in its entirety. The word exhausted seemed too light for how I felt. The demo went great but now it was time for thorough testing
+
+Did I mention our QA person had barely enough skills to open her laptop? Any chance they would get to not do something they would take it. I heard every excuse from "I did not get that email" when they definitely had it to "It didn't work" Are you gonna follow the documentation at all?
+
+I don't think I will ever see a Project Manager absolutely lose it in an internal meeting before. Seeing someone get professionally reamed out is something that you need to see once to just know you never want to be on that same side again.
+
+This introduction to the workforce showed me that in times of pressure, resilience and effort revealed my character. After this project I knew my career would not be defined by technical skills but my adaptability and my ability to learn

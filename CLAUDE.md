@@ -8,9 +8,20 @@ This is an academic repository containing comprehensive course materials for mul
 
 ### Core Structure
 
-- `CPSC 540/`: Statistical Machine Learning I - Contains the most comprehensive materials
-- `BUS 659/`, `BUS 671/`, `BUS 672/`: Business courses with quantitative analysis
+- `CPSC 540/`: Statistical Machine Learning I - Original comprehensive materials with LaTeX math
+- `BUS 659/`: Machine Learning for Managers - Business-focused ML applications  
+- `BUS 671/`: Managing Data for Analysis - SQL and data management systems
+- `BUS 672/`: Data Visualization for Business - Visualization theory and tools
 - `sample files/`: Template R Markdown files for projects
+
+### Business Course Architecture
+
+Each BUS course follows a standardized structure:
+- `Assisted Notes/`: Comprehensive topic coverage with business applications
+- `Assignments/`: Student work and presentation materials  
+- `Class Folder/`: Course materials, datasets, slides, problem sets
+- `Jupyter NoteBooks/`: Python-based computational work
+- `Notes/`: Daily class notes and observations
 
 ## CPSC 540: Statistical Machine Learning I
 
@@ -133,12 +144,53 @@ When modifying assisted notes:
 - Ensure cross-references between related topics
 - Update the README-Index.md when adding new sections
 
+## Business Course Specifications
+
+### BUS 659: Machine Learning for Managers
+**Focus**: Business applications of ML without heavy technical prerequisites
+**Topics**: Uncertainty/bias-variance, linear/logistic regression, regularization, decision trees, random forests, interpretable ML, SQL
+**Tools**: R or Python (assumes no prior coding experience)
+**Assisted Notes**: 5 comprehensive topics with business ROI analysis and implementation guidance
+
+### BUS 671: Managing Data for Analysis  
+**Focus**: Database systems and data pipeline management for business
+**Topics**: SQL fundamentals, data extraction/transformation/loading (ETL), NoSQL variants
+**Tools**: SQL databases, modern data storage systems
+**Assisted Notes**: Covers SQL basics through advanced data retrieval with business applications
+
+### BUS 672: Data Visualization for Business
+**Focus**: Creating business-ready visualizations and presentations
+**Topics**: Visualization theory, audience analysis, dashboard design, presentation skills
+**Tools**: Tableau, ggplot, seaborn, matplotlib, plotly
+**Assignments**: Includes personal story development and presentation optimization
+
+## Python Environment
+
+### Data Science Stack
+The repository includes a comprehensive Python environment (`BUS 659/Jupyter NoteBooks/requirements.txt`):
+- **Core**: numpy, pandas, scipy, scikit-learn, statsmodels
+- **Visualization**: matplotlib, seaborn, plotly  
+- **Jupyter**: Complete notebook ecosystem with extensions
+- **Business Tools**: openpyxl for Excel integration
+
+### Development Commands
+```bash
+# Install Python environment
+pip install -r "BUS 659/Jupyter NoteBooks/requirements.txt"
+
+# Launch Jupyter for analysis
+jupyter lab
+
+# For business presentations
+streamlit run app.py  # If using Streamlit dashboards
+```
+
 ## Academic Context
 
 This repository supports advanced graduate coursework in:
-- Statistical machine learning theory and application
-- Bayesian inference and computational methods
-- Causal inference and experimental design
-- Business analytics and quantitative decision making
+- Statistical machine learning theory and application (CPSC 540)
+- Business-focused machine learning applications (BUS 659)
+- Enterprise data management and SQL (BUS 671)
+- Professional data visualization and presentation (BUS 672)
 
-The assisted notes system provides comprehensive coverage beyond typical course materials, including extensive business applications and professional development guidance.
+The assisted notes system provides comprehensive coverage beyond typical course materials, with particular emphasis on business applications, ROI analysis, and professional development guidance for data science careers.
