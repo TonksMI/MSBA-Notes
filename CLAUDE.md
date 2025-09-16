@@ -127,22 +127,34 @@ Advanced notes include comprehensive business applications:
 
 ## Development Workflow
 
-### Jupyter Notebooks
-- Located in `Jupyter NoteBooks/` subdirectories
-- Primarily for computational assignments and data analysis
-- Use standard data science libraries (pandas, numpy, scikit-learn)
+### File Organization Patterns
+Each course follows a consistent directory structure:
+- `Assisted Notes/`: Comprehensive coverage beyond course materials
+- `Class Folder/`: Official course materials, datasets, problem sets
+- `Jupyter NoteBooks/` or `R Notebooks/`: Computational work and exercises
+- `Notes/`: Daily class notes and observations
+- `Assignments/`: Student work and presentations
 
-### R Analysis
-- R Markdown files for statistical analysis and reporting
+### Jupyter Notebooks
+- Located in `Jupyter NoteBooks/` subdirectories for each BUS course
+- Located in `Notes/` for CPSC 540
+- Primarily for computational assignments and data analysis
+- Use standard data science libraries (pandas, numpy, scikit-learn, matplotlib, seaborn)
+- Standard naming convention: `BUS659_lab_class_X_TopicName.ipynb`
+
+### R Analysis Workflow
+- R Markdown files located in `R Notebooks/` for CPSC 540
+- Template files in `sample files/` directory
 - Use consistent chunk options for academic presentation
-- Include proper documentation and interpretation
+- Standard seed: `set.seed(1818)` for reproducibility
+- Render to HTML for sharing: `.Rmd` → `.html`
 
 ### Content Updates
 When modifying assisted notes:
-- Maintain LaTeX mathematical notation standards
+- Maintain LaTeX mathematical notation standards ($$ for display, $ for inline)
 - Preserve the comprehensive structure (theory + business + code)
 - Ensure cross-references between related topics
-- Update the README-Index.md when adding new sections
+- Update the README-Index.md when adding new sections to CPSC 540
 
 ## Business Course Specifications
 
@@ -162,27 +174,69 @@ When modifying assisted notes:
 **Focus**: Creating business-ready visualizations and presentations
 **Topics**: Visualization theory, audience analysis, dashboard design, presentation skills
 **Tools**: Tableau, ggplot, seaborn, matplotlib, plotly
-**Assignments**: Includes personal story development and presentation optimization
+**Assignment Structure**: Personal story development with hero's journey framework, includes detailed scoring rubrics (73-92/100 range), memory guides for interview presentations, and optimization for 500-word delivery
 
 ## Python Environment
 
 ### Data Science Stack
 The repository includes a comprehensive Python environment (`BUS 659/Jupyter NoteBooks/requirements.txt`):
-- **Core**: numpy, pandas, scipy, scikit-learn, statsmodels
-- **Visualization**: matplotlib, seaborn, plotly  
-- **Jupyter**: Complete notebook ecosystem with extensions
-- **Business Tools**: openpyxl for Excel integration
+- **Core Data Science**: numpy (2.0.2), pandas (2.3.2), scipy (1.13.1), scikit-learn (1.6.1), statsmodels (0.14.5)
+- **Visualization**: matplotlib (3.9.4), seaborn (0.13.2), plotly (6.3.0)
+- **Jupyter**: Complete notebook ecosystem with JupyterLab (4.4.6), widgets, and extensions
+- **Business Tools**: openpyxl (3.1.5) for Excel integration, xlrd for legacy Excel files
+- **Statistical Analysis**: patsy (1.0.1) for statistical modeling formulas
 
 ### Development Commands
+
+#### Python Environment Setup
 ```bash
-# Install Python environment
+# Install Python environment for BUS 659 coursework
 pip install -r "BUS 659/Jupyter NoteBooks/requirements.txt"
 
 # Launch Jupyter for analysis
 jupyter lab
 
-# For business presentations
-streamlit run app.py  # If using Streamlit dashboards
+# Start Jupyter for specific course work
+cd "BUS 659/Jupyter NoteBooks" && jupyter lab
+cd "CPSC 540/Notes" && jupyter lab
+```
+
+#### R Development
+```bash
+# Open R Markdown files in RStudio (preferred)
+# For CPSC 540 R analysis:
+cd "CPSC 540/R Notebooks"
+
+# Render R Markdown to HTML
+Rscript -e "rmarkdown::render('filename.Rmd')"
+```
+
+#### Git Workflow
+```bash
+# Standard academic workflow
+git add .
+git commit -m "descriptive message"
+git push origin main
+```
+
+### R Markdown Template
+Standard R Markdown setup for academic projects (see `sample files/FinalProject.Rmd`):
+- YAML header with title, author, subtitle, HTML output (`df_print: paged`)
+- Seed set to 1818 for reproducibility: `set.seed(1818)`
+- Standard chunk options: `tidy=TRUE`, `size="vsmall"`, caching enabled, `fig.align='center'`
+- Core libraries: tidyverse, glmnet, rsample, forcats, data.table, coefplot
+- Options set: `options(width=70)`, `options(scipen=99)` for numeric display
+
+### R Package Installation for CPSC 540
+```r
+# Core packages used across CPSC 540 materials
+install.packages(c(
+  "tidyverse", "broom",           # Data manipulation and tidy outputs
+  "lme4", "mgcv",                 # Mixed effects and GAMs
+  "rstan", "brms", "bayesplot",   # Bayesian analysis
+  "dagitty", "ggdag", "marginaleffects", # Causal inference
+  "glmnet", "glmnetUtils"         # Regularized regression
+))
 ```
 
 ## Academic Context

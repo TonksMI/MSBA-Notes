@@ -1,0 +1,33 @@
+```{r}
+library(tidyverse)
+library(brms)
+library(tidybayes)
+library(betareg)
+```
+# Simulate data for linear regression----
+```{r}
+set.seed(540)
+n <- 100
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+y <- 5 + 2 * x1 - 1.25 * x2 + rnorm(n)
+
+df <- data.frame(x1,x2,y)
+```
+
+```{r}
+# Linear regression using lm/glm (Frequentist)----
+linear_lm <- lm(y ~ x1 + x2, 
+                data = df)
+# linear_glm <- glm(y ~ x1 + x2,
+#                   family = gaussian(), data = df)
+
+summary(linear_lm)
+```
+
+
+
+## glm
+```{r}
+family = gaussian()
+```
