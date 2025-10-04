@@ -1,0 +1,183 @@
+---
+title: "CPSC 540 HW1 Analysis"
+format:
+  html:
+    toc: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(broom)
+library(scales)
+
+set.seed(540)
+```
+
+## Data Load
+
+```{r}
+# Path is relative to this folder
+marketing <- read_csv("../Claude Code/marketingcampaign.csv",
+                      col_types = cols(
+                        age = col_integer(),
+                        gender = readr::col_factor(),
+                        past_purchases = col_integer(),
+                        campaign_variant = readr::col_factor(levels = c("A", "B", "C")),
+                        ad_source = readr::col_factor(),
+                        email_signup = col_logical(),
+                        campaign_spend = col_double()
+                      ))
+
+marketing
+``` 
+
+## Quick Glance
+
+```{r}
+summary(marketing)
+```
+
+```{r}
+marketing %>%
+  count(gender, campaign_variant) %>%
+  arrange(desc(n))
+```
+
+## Past Purchases (Question 1)
+
+```{r}
+# Distribution of past purchases
+marketing %>%
+  ggplot(aes(x = past_purchases)) +
+  geom_histogram(binwidth = 3, fill = "#1f77b4", color = "white", boundary = 0) +
+  scale_x_continuous(breaks = seq(0, 100, 10)) +
+  labs(x = "Past purchases (2 years)", y = "Customers", title = "Distribution of past purchases")
+```
+
+```{r}
+# Average past purchases by demographic features
+marketing %>%
+  group_by(gender) %>%
+  summarise(mean_past = mean(past_purchases), .groups = "drop")
+```
+
+```{r}
+marketing %>%
+  group_by(email_signup) %>%
+  summarise(mean_past = mean(past_purchases), .groups = "drop")
+```
+
+### Poisson regression
+
+```{r}
+poisson_mod <- glm(past_purchases ~ age + gender + campaign_variant + ad_source + email_signup,
+                   family = poisson(link = "log"),
+                   data = marketing)
+
+tidy_poisson <- tidy(poisson_mod, exponentiate = TRUE, conf.int = TRUE)
+tidy_poisson
+```
+
+```{r}
+tidy_poisson %>%
+  filter(term == "age" | str_detect(term, "gender")) %>%
+  mutate(label = case_when(
+    term == "age" ~ "Age (per year)",
+    term == "genderWoman" ~ "Gender: Woman vs Man",
+    term == "genderNon-Binary" ~ "Gender: Non-Binary vs Man",
+    term == "genderOther" ~ "Gender: Other vs Man",
+    TRUE ~ term
+  )) %>%
+  select(label, estimate, conf.low, conf.high, p.value)
+```
+
+```{r}
+# Model fit diagnostics
+broom::glance(poisson_mod)
+```
+
+## Campaign Spend (Question 2)
+
+```{r}
+marketing %>%
+  group_by(campaign_variant) %>%
+  summarise(
+    customers = n(),
+    avg_spend = mean(campaign_spend),
+    median_spend = median(campaign_spend)
+  )
+```
+
+```{r}
+marketing %>%
+  ggplot(aes(x = campaign_variant, y = campaign_spend, fill = campaign_variant)) +
+  geom_boxplot(alpha = 0.75) +
+  scale_y_continuous(labels = dollar_format()) +
+  labs(x = "Campaign variant", y = "Campaign spend (USD)", title = "Spend by campaign variant") +
+  theme(legend.position = "none")
+```
+
+### Log-linear model for spend
+
+```{r}
+spend_mod <- lm(log1p(campaign_spend) ~ age + past_purchases + gender + campaign_variant + ad_source + email_signup,
+                data = marketing)
+
+tidy_spend <- tidy(spend_mod, conf.int = TRUE)
+tidy_spend
+```
+
+```{r}
+tidy_spend %>%
+  filter(str_detect(term, "campaign_variant")) %>%
+  mutate(variant = str_replace(term, "campaign_variant", "Variant ")) %>%
+  select(variant, estimate, conf.low, conf.high, p.value)
+```
+
+```{r}
+# Estimated spend for a typical customer (mean age/past purchases, most common categories)
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+typical_customer <- tibble(
+  age = mean(marketing$age),
+  past_purchases = mean(marketing$past_purchases),
+  gender = factor(Mode(marketing$gender), levels = levels(marketing$gender)),
+  ad_source = factor(Mode(marketing$ad_source), levels = levels(marketing$ad_source)),
+  email_signup = Mode(marketing$email_signup)
+)
+
+predict_typical <- function(variant) {
+  new_data <- typical_customer %>%
+    mutate(campaign_variant = factor(variant, levels = levels(marketing$campaign_variant)))
+  pred_log <- predict(spend_mod, newdata = new_data)
+  tibble(campaign_variant = variant, predicted_spend = expm1(pred_log))
+}
+
+map_dfr(levels(marketing$campaign_variant), predict_typical)
+```
+
+```{r}
+broom::glance(spend_mod)
+```
+
+## Save model objects for reproducibility
+
+```{r}
+write_rds(poisson_mod, "poisson_mod.rds")
+write_rds(spend_mod, "spend_mod.rds")
+```
+
+## Session Info
+
+```{r}
+sessionInfo()
+```

@@ -1,0 +1,56 @@
+---
+title: "HW1"
+format: html
+---
+
+# Homework 1
+
+This is [**NOT**]{.underline} A GROUP ASSIGNMENT. You should work individually.
+
+**Due September 29th, 2025 by 11:59pm**
+
+## Data
+
+The [data for this homework assignment](https://raw.githubusercontent.com/chelseaparlett/CPSC540ParlettPelleriti/refs/heads/main/Data/marketingcampaign.csv)is *synthetic* data looking at some marketing data for 5000 customers from **Company X**. Company X is a wellness brand that sells various supplements and other wellness products. Recently, they ran a new campaign called "Be Well" to support their new energy + protein poweder. There were 3 variants of the campaigned used. This data set contains data about the campaign as well as some customer information. The following variables are included in the data:
+
+-   `age`: age of customer
+
+-   `gender`: self-identified gender (provided by customer during purchase)
+
+-   `past_purchases`: number of purchases the customer has made over the past 2 years
+
+-   `campaign_variant`: which variant of the new Be Well campaign the customer was assigned to. `A` is the old, business-as-usual campaign, `B` is the new Be Well campaign, and `C` is a version of the Be Well campaign that focuses on mental health instead of physical health.
+
+-   `ad_source`: the source of the Be Well ad that the customer saw
+
+-   `email_signup`: whether or not the customer is signed up for promotional emails from Company X.
+
+-   `campaign_spend`: how much the customer spent on items that were a part of the Be Well campaign
+
+## Questions
+
+For each question, choose an appropriate model that can help answer the question, fit that model to the data along with plots and exploratory data analysis and use these results to answer the questions. Your answers should be geared towards a non-data expert.
+
+You **must** use models we covered in class, or extensions of these models. For example, I don't want you fitting neural networks. I want you to use the statistical models covered in this class, or closely related (check with me if you're unsure). For example: Ordinal Regression would be okay, Convolutional Neural Networks would not.
+
+-   **Question 1**: What kinds of people make *more* purchases (`past_purchases`)?
+
+-   **Question 2**: Which campaign variant should Company X use in the future and why?
+
+# Report Sections
+
+You should turn in a **readme**, a **code** file (.R, .Rmd, .qmd...etc) of your R code for analysis and a written **report**. The report should have the following **sections** (NO **Introduction** needed as we're all using the same data. Please still explain your results as if presenting them to a non-expert):
+
+\- **Analysis**: Tell us **how** analyzed the data to answer the questions above (e.g. what methods/models did you use?) Also explain **why** you chose the model/analyses you did.
+
+\- **Results**: What is the **answer** to the questions (clearly label where you're answering each Question)? What did the analyses tell you?
+
+\- **Discussion**: What are the **potential impacts/applications** of the answers you found? What would you do *differently* next time if you re-did the same assignment?
+
+As a reminder, I expect the following files when you turn in your assignment:
+
+\- PDF of report
+
+\- code file (.R, .qmd, .Rmd)
+
+\- a readme (.txt, .md)
