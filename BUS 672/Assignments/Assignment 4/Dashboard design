@@ -1,0 +1,39 @@
+# Runtime Analysis dashboard
+
+This would be to redesign a dashboard I created for our daily file load process
+
+1st page (Landing Page)
+
+## Data Tool Dashboard
+
+First row would be an aggregate of the weeks job runs by Source ERP each next to each other
+
+Estel Eniteo D365 EDW Invex
+
+EX:
+
+Estel:
+764 jobs
+(5 runs errored (in red))
+
+Then below it a plot of runtime per source ERP
+
+last two weeks of runs
+
+Below the plot of runtimes would be a DQ check
+
+Check each ERP's data quality and show differences bewteen expected vs actual:
+
+Estel:
+
+1012 tons difference
+$10,005 difference
+
+Second Dashboard Double Click Data Quality secion:
+
+Compare the differences by company source system for each Domain Sales, Receipts, Inventory, Purchase Orders, Sales Orders, etc
+
+Look at missing Dimension data (List all differences by Domain)
+
+Branches Products Vendors Customers
+

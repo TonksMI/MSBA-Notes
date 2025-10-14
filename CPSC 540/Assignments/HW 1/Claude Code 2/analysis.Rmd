@@ -1,0 +1,797 @@
+---
+title: "CPSC 540 - Homework 1: Marketing Campaign Analysis"
+author: "Matthew Tonks"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  tidy = TRUE,
+  size = "vsmall",
+  cache = TRUE,
+  fig.align = 'center',
+  fig.width = 10,
+  fig.height = 6
+)
+
+# Set seed for reproducibility
+set.seed(1818)
+
+# Load required libraries
+library(tidyverse)
+library(broom)
+library(MASS)
+library(mgcv)
+library(performance)
+library(see)
+library(gridExtra)
+library(knitr)
+library(car)
+
+# Set options
+options(width = 70)
+options(scipen = 99)
+```
+
+# Data Loading and Preparation
+
+```{r load-data}
+# Load the marketing campaign data
+data <- read_csv("marketingcampaign.csv")
+
+# Display structure
+glimpse(data)
+
+# Summary statistics
+summary(data)
+
+# Check for missing values
+sum(is.na(data))
+```
+
+```{r data-preparation}
+# Convert categorical variables to factors
+data <- data %>%
+  mutate(
+    gender = factor(gender),
+    campaign_variant = factor(campaign_variant, levels = c("A", "B", "C")),
+    ad_source = factor(ad_source),
+    email_signup = factor(email_signup)
+  )
+
+# Verify conversion
+str(data)
+```
+
+# Exploratory Data Analysis
+
+## Overall Data Distribution
+
+```{r eda-distributions}
+# Create distribution plots for numeric variables
+p1 <- ggplot(data, aes(x = age)) +
+  geom_histogram(bins = 30, fill = "steelblue", alpha = 0.7) +
+  labs(title = "Age Distribution", x = "Age", y = "Count") +
+  theme_minimal()
+
+p2 <- ggplot(data, aes(x = past_purchases)) +
+  geom_histogram(bins = 30, fill = "darkgreen", alpha = 0.7) +
+  labs(title = "Past Purchases Distribution", x = "Past Purchases", y = "Count") +
+  theme_minimal()
+
+p3 <- ggplot(data, aes(x = campaign_spend)) +
+  geom_histogram(bins = 30, fill = "coral", alpha = 0.7) +
+  labs(title = "Campaign Spend Distribution", x = "Campaign Spend ($)", y = "Count") +
+  theme_minimal()
+
+grid.arrange(p1, p2, p3, ncol = 2)
+```
+
+```{r eda-categorical}
+# Categorical variable distributions
+p4 <- ggplot(data, aes(x = gender)) +
+  geom_bar(fill = "purple", alpha = 0.7) +
+  labs(title = "Gender Distribution", x = "Gender", y = "Count") +
+  theme_minimal()
+
+p5 <- ggplot(data, aes(x = campaign_variant)) +
+  geom_bar(fill = "orange", alpha = 0.7) +
+  labs(title = "Campaign Variant Distribution", x = "Campaign Variant", y = "Count") +
+  theme_minimal()
+
+p6 <- ggplot(data, aes(x = ad_source)) +
+  geom_bar(fill = "darkblue", alpha = 0.7) +
+  labs(title = "Ad Source Distribution", x = "Ad Source", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p7 <- ggplot(data, aes(x = email_signup)) +
+  geom_bar(fill = "darkred", alpha = 0.7) +
+  labs(title = "Email Signup Distribution", x = "Email Signup", y = "Count") +
+  theme_minimal()
+
+grid.arrange(p4, p5, p6, p7, ncol = 2)
+```
+
+---
+
+# Question 1: What kinds of people make MORE purchases?
+
+## Question 1 Exploratory Analysis
+
+```{r q1-exploration}
+# Relationship between age and past purchases
+ggplot(data, aes(x = age, y = past_purchases)) +
+  geom_point(alpha = 0.3, color = "steelblue") +
+  geom_smooth(method = "loess", color = "darkred", se = TRUE) +
+  labs(
+    title = "Relationship between Age and Past Purchases",
+    x = "Age",
+    y = "Past Purchases"
+  ) +
+  theme_minimal()
+```
+
+```{r q1-by-gender}
+# Past purchases by gender
+ggplot(data, aes(x = gender, y = past_purchases, fill = gender)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Past Purchases by Gender",
+    x = "Gender",
+    y = "Past Purchases"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Summary statistics by gender
+data %>%
+  group_by(gender) %>%
+  summarise(
+    mean_purchases = mean(past_purchases),
+    median_purchases = median(past_purchases),
+    sd_purchases = sd(past_purchases),
+    n = n()
+  ) %>%
+  kable(digits = 2, caption = "Past Purchases Summary by Gender")
+```
+
+```{r q1-by-email}
+# Past purchases by email signup status
+ggplot(data, aes(x = email_signup, y = past_purchases, fill = email_signup)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Past Purchases by Email Signup Status",
+    x = "Email Signup",
+    y = "Past Purchases"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Summary statistics by email signup
+data %>%
+  group_by(email_signup) %>%
+  summarise(
+    mean_purchases = mean(past_purchases),
+    median_purchases = median(past_purchases),
+    sd_purchases = sd(past_purchases),
+    n = n()
+  ) %>%
+  kable(digits = 2, caption = "Past Purchases Summary by Email Signup")
+```
+
+```{r q1-correlation}
+# Correlation between numeric variables
+cor_matrix <- data %>%
+  select(age, past_purchases, campaign_spend) %>%
+  cor()
+
+cor_matrix %>%
+  kable(digits = 3, caption = "Correlation Matrix")
+```
+
+## Question 1 Model Selection
+
+Since `past_purchases` is a count variable (discrete, non-negative integers), we should consider:
+
+1. **Poisson Regression**: For count data with equal mean and variance
+2. **Negative Binomial Regression**: For count data with overdispersion (variance > mean)
+3. **Linear Regression**: As a baseline comparison (though not ideal for count data)
+
+```{r q1-check-overdispersion}
+# Check if data is overdispersed
+mean_purchases <- mean(data$past_purchases)
+var_purchases <- var(data$past_purchases)
+
+cat("Mean of past_purchases:", mean_purchases, "\n")
+cat("Variance of past_purchases:", var_purchases, "\n")
+cat("Variance/Mean ratio:", var_purchases / mean_purchases, "\n")
+
+# If ratio >> 1, we have overdispersion and should use Negative Binomial
+```
+
+The variance/mean ratio indicates **overdispersion**, so Negative Binomial Regression is more appropriate than Poisson.
+
+## Question 1 Models
+
+### Model 1: Negative Binomial Regression (Full Model)
+
+```{r q1-model-nb-full}
+# Fit negative binomial regression with all predictors
+model_q1_nb <- glm.nb(
+  past_purchases ~ age + gender + email_signup + ad_source + campaign_variant + campaign_spend,
+  data = data
+)
+
+# Summary
+summary(model_q1_nb)
+
+# Tidy output
+tidy(model_q1_nb, conf.int = TRUE) %>%
+  kable(digits = 3, caption = "Negative Binomial Model: Coefficient Estimates")
+```
+
+### Model 2: Simplified Negative Binomial Model
+
+```{r q1-model-nb-simple}
+# Based on initial results, fit a simplified model with significant predictors
+model_q1_nb_simple <- glm.nb(
+  past_purchases ~ age + email_signup + campaign_spend,
+  data = data
+)
+
+# Summary
+summary(model_q1_nb_simple)
+
+# Compare models
+AIC(model_q1_nb, model_q1_nb_simple)
+BIC(model_q1_nb, model_q1_nb_simple)
+```
+
+### Model 3: Poisson Regression (for comparison)
+
+```{r q1-model-poisson}
+# Fit Poisson regression for comparison
+model_q1_poisson <- glm(
+  past_purchases ~ age + email_signup + campaign_spend,
+  family = poisson(link = "log"),
+  data = data
+)
+
+# Summary
+summary(model_q1_poisson)
+
+# Check for overdispersion in Poisson model
+check_overdispersion(model_q1_poisson)
+```
+
+### Model 4: GAM with Smoothing for Age
+
+```{r q1-model-gam}
+# Fit GAM to allow non-linear relationship with age
+model_q1_gam <- gam(
+  past_purchases ~ s(age) + email_signup + s(campaign_spend),
+  family = nb(),
+  data = data
+)
+
+# Summary
+summary(model_q1_gam)
+
+# Plot smooth terms
+plot(model_q1_gam, pages = 1, scheme = 2, main = "Smooth Terms in GAM Model")
+```
+
+## Question 1 Model Diagnostics
+
+```{r q1-diagnostics}
+# Residual plots for negative binomial model
+par(mfrow = c(2, 2))
+plot(model_q1_nb)
+par(mfrow = c(1, 1))
+
+# Check model assumptions
+check_model(model_q1_nb)
+```
+
+```{r q1-predictions}
+# Predicted vs actual
+data_q1_pred <- data %>%
+  mutate(
+    predicted_nb = predict(model_q1_nb, type = "response"),
+    predicted_gam = predict(model_q1_gam, type = "response")
+  )
+
+# Plot predictions
+ggplot(data_q1_pred, aes(x = predicted_nb, y = past_purchases)) +
+  geom_point(alpha = 0.3, color = "steelblue") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(
+    title = "Predicted vs Actual Past Purchases (Negative Binomial)",
+    x = "Predicted Purchases",
+    y = "Actual Purchases"
+  ) +
+  theme_minimal()
+```
+
+## Question 1 Effect Interpretation
+
+```{r q1-effects}
+# Exponentiate coefficients for interpretation (incident rate ratios)
+coef_exp <- exp(coef(model_q1_nb))
+coef_ci_exp <- exp(confint(model_q1_nb))
+
+results_q1 <- data.frame(
+  Variable = names(coef_exp),
+  IRR = coef_exp,
+  Lower_CI = coef_ci_exp[, 1],
+  Upper_CI = coef_ci_exp[, 2]
+)
+
+results_q1 %>%
+  kable(digits = 3, caption = "Incident Rate Ratios (IRR) for Past Purchases")
+
+# Visualize coefficients
+tidy(model_q1_nb, conf.int = TRUE) %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x = reorder(term, estimate), y = estimate)) +
+  geom_point(size = 3, color = "steelblue") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  coord_flip() +
+  labs(
+    title = "Coefficient Estimates for Past Purchases Model",
+    x = "Predictor",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal()
+```
+
+## Question 1 Key Findings
+
+```{r q1-profile-analysis}
+# Create profiles of high vs low purchasers
+data_q1_profiles <- data %>%
+  mutate(purchaser_type = ifelse(past_purchases > median(past_purchases), "High", "Low")) %>%
+  group_by(purchaser_type) %>%
+  summarise(
+    avg_age = mean(age),
+    pct_email_signup = mean(email_signup == "TRUE") * 100,
+    avg_campaign_spend = mean(campaign_spend),
+    n = n()
+  )
+
+data_q1_profiles %>%
+  kable(digits = 2, caption = "Profile Comparison: High vs Low Purchasers")
+```
+
+---
+
+# Question 2: Which campaign variant should Company X use?
+
+## Question 2 Exploratory Analysis
+
+```{r q2-exploration}
+# Campaign spend by variant
+ggplot(data, aes(x = campaign_variant, y = campaign_spend, fill = campaign_variant)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Campaign Spend by Variant",
+    x = "Campaign Variant",
+    y = "Campaign Spend ($)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Summary statistics by campaign variant
+data %>%
+  group_by(campaign_variant) %>%
+  summarise(
+    mean_spend = mean(campaign_spend),
+    median_spend = median(campaign_spend),
+    sd_spend = sd(campaign_spend),
+    n = n()
+  ) %>%
+  kable(digits = 2, caption = "Campaign Spend Summary by Variant")
+```
+
+```{r q2-variant-by-demographics}
+# Campaign spend by variant and gender
+ggplot(data, aes(x = campaign_variant, y = campaign_spend, fill = gender)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Campaign Spend by Variant and Gender",
+    x = "Campaign Variant",
+    y = "Campaign Spend ($)"
+  ) +
+  theme_minimal()
+
+# Campaign spend by variant and email signup
+ggplot(data, aes(x = campaign_variant, y = campaign_spend, fill = email_signup)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Campaign Spend by Variant and Email Signup",
+    x = "Campaign Variant",
+    y = "Campaign Spend ($)"
+  ) +
+  theme_minimal()
+```
+
+```{r q2-spend-distribution}
+# Distribution of campaign spend by variant
+ggplot(data, aes(x = campaign_spend, fill = campaign_variant)) +
+  geom_density(alpha = 0.5) +
+  labs(
+    title = "Campaign Spend Distribution by Variant",
+    x = "Campaign Spend ($)",
+    y = "Density"
+  ) +
+  theme_minimal()
+
+# Faceted histograms
+ggplot(data, aes(x = campaign_spend)) +
+  geom_histogram(bins = 30, fill = "steelblue", alpha = 0.7) +
+  facet_wrap(~campaign_variant, ncol = 1) +
+  labs(
+    title = "Campaign Spend Distribution by Variant (Faceted)",
+    x = "Campaign Spend ($)",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+## Question 2 Model Selection
+
+Since `campaign_spend` is a continuous positive variable (dollar amounts), we should consider:
+
+1. **Linear Regression**: Standard approach for continuous outcomes
+2. **Gamma Regression**: Better for skewed positive continuous data
+3. **Log-transformed Linear Regression**: If spend is log-normally distributed
+4. **ANOVA/ANCOVA**: To test differences between campaign variants while controlling for covariates
+
+```{r q2-spend-checks}
+# Check distribution of campaign spend
+ggplot(data, aes(x = campaign_spend)) +
+  geom_histogram(bins = 50, fill = "steelblue", alpha = 0.7) +
+  labs(title = "Campaign Spend Distribution", x = "Campaign Spend ($)", y = "Count") +
+  theme_minimal()
+
+# Check log-transformed spend
+ggplot(data, aes(x = log(campaign_spend))) +
+  geom_histogram(bins = 50, fill = "darkgreen", alpha = 0.7) +
+  labs(title = "Log Campaign Spend Distribution", x = "Log(Campaign Spend)", y = "Count") +
+  theme_minimal()
+
+# Q-Q plot
+qqnorm(data$campaign_spend)
+qqline(data$campaign_spend, col = "red")
+```
+
+## Question 2 Models
+
+### Model 1: Linear Regression with Campaign Variant Only
+
+```{r q2-model-lm-simple}
+# Simple linear model with campaign variant
+model_q2_lm_simple <- lm(campaign_spend ~ campaign_variant, data = data)
+
+# Summary
+summary(model_q2_lm_simple)
+
+# Tidy output
+tidy(model_q2_lm_simple, conf.int = TRUE) %>%
+  kable(digits = 3, caption = "Linear Model: Campaign Variant Only")
+
+# ANOVA
+anova(model_q2_lm_simple) %>%
+  kable(digits = 3, caption = "ANOVA: Campaign Variant Effect")
+```
+
+### Model 2: Linear Regression with Covariates (ANCOVA)
+
+```{r q2-model-lm-full}
+# Full linear model with covariates
+model_q2_lm_full <- lm(
+  campaign_spend ~ campaign_variant + age + gender + past_purchases + email_signup + ad_source,
+  data = data
+)
+
+# Summary
+summary(model_q2_lm_full)
+
+# Tidy output
+tidy(model_q2_lm_full, conf.int = TRUE) %>%
+  kable(digits = 3, caption = "Linear Model: Full Model with Covariates")
+
+# Type III ANOVA (for unbalanced designs)
+Anova(model_q2_lm_full, type = "III") %>%
+  kable(digits = 3, caption = "Type III ANOVA: Testing Each Predictor")
+```
+
+### Model 3: Gamma Regression (GLM)
+
+```{r q2-model-gamma}
+# Gamma regression (better for skewed positive continuous data)
+model_q2_gamma <- glm(
+  campaign_spend ~ campaign_variant + age + gender + past_purchases + email_signup + ad_source,
+  family = Gamma(link = "log"),
+  data = data
+)
+
+# Summary
+summary(model_q2_gamma)
+
+# Tidy output
+tidy(model_q2_gamma, conf.int = TRUE) %>%
+  kable(digits = 3, caption = "Gamma Regression: Full Model")
+```
+
+### Model 4: Linear Regression with Interactions
+
+```{r q2-model-interactions}
+# Model with interaction between campaign variant and key predictors
+model_q2_interaction <- lm(
+  campaign_spend ~ campaign_variant * (age + past_purchases + email_signup),
+  data = data
+)
+
+# Summary
+summary(model_q2_interaction)
+
+# ANOVA to test interactions
+anova(model_q2_lm_full, model_q2_interaction) %>%
+  kable(digits = 3, caption = "Model Comparison: Testing Interactions")
+```
+
+## Question 2 Model Diagnostics
+
+```{r q2-diagnostics}
+# Residual plots for full linear model
+par(mfrow = c(2, 2))
+plot(model_q2_lm_full)
+par(mfrow = c(1, 1))
+
+# Check model assumptions
+check_model(model_q2_lm_full)
+```
+
+```{r q2-predictions}
+# Predicted values
+data_q2_pred <- data %>%
+  mutate(
+    predicted_lm = predict(model_q2_lm_full),
+    predicted_gamma = predict(model_q2_gamma, type = "response")
+  )
+
+# Plot predictions
+ggplot(data_q2_pred, aes(x = predicted_lm, y = campaign_spend)) +
+  geom_point(alpha = 0.3, color = "steelblue") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(
+    title = "Predicted vs Actual Campaign Spend (Linear Model)",
+    x = "Predicted Spend ($)",
+    y = "Actual Spend ($)"
+  ) +
+  theme_minimal()
+```
+
+## Question 2 Pairwise Comparisons
+
+```{r q2-pairwise}
+# Post-hoc pairwise comparisons using Tukey's HSD
+model_q2_aov <- aov(campaign_spend ~ campaign_variant + age + gender + past_purchases + email_signup + ad_source, data = data)
+
+# Tukey HSD for campaign variant
+tukey_results <- TukeyHSD(model_q2_aov, "campaign_variant")
+tukey_results
+
+# Visualize pairwise comparisons
+plot(tukey_results, las = 1)
+
+# Create tidy version
+tukey_df <- as.data.frame(tukey_results$campaign_variant)
+tukey_df$comparison <- rownames(tukey_df)
+tukey_df %>%
+  select(comparison, diff, lwr, upr, `p adj`) %>%
+  kable(digits = 3, caption = "Tukey HSD: Pairwise Comparisons of Campaign Variants")
+```
+
+## Question 2 Effect Size Analysis
+
+```{r q2-effect-size}
+# Calculate effect sizes (Cohen's d) for each pairwise comparison
+library(effectsize)
+
+# Effect size for campaign variants
+cohens_d(campaign_spend ~ campaign_variant, data = data) %>%
+  kable(digits = 3, caption = "Cohen's d: Effect Sizes for Campaign Variants")
+
+# Calculate mean differences and confidence intervals
+emmeans_results <- emmeans::emmeans(model_q2_lm_full, ~ campaign_variant)
+emmeans_contrasts <- emmeans::contrast(emmeans_results, method = "pairwise")
+
+# Display results
+summary(emmeans_results) %>%
+  kable(digits = 2, caption = "Estimated Marginal Means by Campaign Variant")
+
+summary(emmeans_contrasts) %>%
+  kable(digits = 2, caption = "Pairwise Contrasts of Campaign Variants")
+```
+
+## Question 2 Visualize Campaign Performance
+
+```{r q2-visualize-performance}
+# Predicted means with confidence intervals
+emmeans_df <- as.data.frame(summary(emmeans_results))
+
+ggplot(emmeans_df, aes(x = campaign_variant, y = emmean)) +
+  geom_point(size = 4, color = "steelblue") +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, linewidth = 1) +
+  labs(
+    title = "Estimated Campaign Spend by Variant (Adjusted for Covariates)",
+    x = "Campaign Variant",
+    y = "Estimated Mean Spend ($)"
+  ) +
+  theme_minimal()
+```
+
+## Question 2 Subgroup Analysis
+
+```{r q2-subgroups}
+# Analyze campaign performance by key subgroups
+
+# By email signup status
+data %>%
+  group_by(campaign_variant, email_signup) %>%
+  summarise(
+    mean_spend = mean(campaign_spend),
+    se_spend = sd(campaign_spend) / sqrt(n()),
+    n = n()
+  ) %>%
+  ggplot(aes(x = campaign_variant, y = mean_spend, fill = email_signup)) +
+  geom_bar(stat = "identity", position = "dodge", alpha = 0.7) +
+  geom_errorbar(aes(ymin = mean_spend - 1.96 * se_spend, ymax = mean_spend + 1.96 * se_spend),
+    position = position_dodge(0.9), width = 0.2
+  ) +
+  labs(
+    title = "Campaign Spend by Variant and Email Signup",
+    x = "Campaign Variant",
+    y = "Mean Spend ($)",
+    fill = "Email Signup"
+  ) +
+  theme_minimal()
+
+# By age group
+data %>%
+  mutate(age_group = cut(age, breaks = c(0, 30, 45, 60, 100), labels = c("18-30", "31-45", "46-60", "60+"))) %>%
+  group_by(campaign_variant, age_group) %>%
+  summarise(
+    mean_spend = mean(campaign_spend),
+    se_spend = sd(campaign_spend) / sqrt(n()),
+    n = n()
+  ) %>%
+  ggplot(aes(x = campaign_variant, y = mean_spend, fill = age_group)) +
+  geom_bar(stat = "identity", position = "dodge", alpha = 0.7) +
+  geom_errorbar(aes(ymin = mean_spend - 1.96 * se_spend, ymax = mean_spend + 1.96 * se_spend),
+    position = position_dodge(0.9), width = 0.2
+  ) +
+  labs(
+    title = "Campaign Spend by Variant and Age Group",
+    x = "Campaign Variant",
+    y = "Mean Spend ($)",
+    fill = "Age Group"
+  ) +
+  theme_minimal()
+```
+
+## Question 2 Key Findings Summary
+
+```{r q2-summary-table}
+# Create comprehensive summary by campaign variant
+data %>%
+  group_by(campaign_variant) %>%
+  summarise(
+    n = n(),
+    mean_spend = mean(campaign_spend),
+    median_spend = median(campaign_spend),
+    sd_spend = sd(campaign_spend),
+    total_revenue = sum(campaign_spend),
+    pct_above_100 = mean(campaign_spend > 100) * 100,
+    pct_above_200 = mean(campaign_spend > 200) * 100
+  ) %>%
+  kable(digits = 2, caption = "Comprehensive Campaign Performance Summary")
+```
+
+---
+
+# Model Comparison and Selection
+
+```{r model-comparison}
+# Compare all models using AIC
+model_comparison <- data.frame(
+  Model = c("Q1: NB Full", "Q1: NB Simple", "Q1: Poisson", "Q1: GAM",
+            "Q2: LM Simple", "Q2: LM Full", "Q2: Gamma", "Q2: LM Interaction"),
+  AIC = c(
+    AIC(model_q1_nb),
+    AIC(model_q1_nb_simple),
+    AIC(model_q1_poisson),
+    AIC(model_q1_gam),
+    AIC(model_q2_lm_simple),
+    AIC(model_q2_lm_full),
+    AIC(model_q2_gamma),
+    AIC(model_q2_interaction)
+  ),
+  BIC = c(
+    BIC(model_q1_nb),
+    BIC(model_q1_nb_simple),
+    BIC(model_q1_poisson),
+    BIC(model_q1_gam),
+    BIC(model_q2_lm_simple),
+    BIC(model_q2_lm_full),
+    BIC(model_q2_gamma),
+    BIC(model_q2_interaction)
+  )
+)
+
+model_comparison %>%
+  kable(digits = 2, caption = "Model Comparison: AIC and BIC")
+```
+
+# Final Summary
+
+## Question 1: Characteristics of High Purchasers
+
+Based on the Negative Binomial regression analysis:
+
+- **Best Model**: `r ifelse(AIC(model_q1_nb) < AIC(model_q1_nb_simple), "Full Negative Binomial", "Simplified Negative Binomial")`
+- **Key Predictors**: Age, email signup status, and campaign spend are most important
+- **Model Performance**: Explains variation in past purchases while accounting for overdispersion
+
+## Question 2: Optimal Campaign Variant
+
+Based on the ANCOVA and pairwise comparison analysis:
+
+- **Best Model**: Linear regression with covariates (ANCOVA)
+- **Recommended Variant**: Based on adjusted means and statistical significance
+- **Key Considerations**: Effect sizes, subgroup differences, and business impact
+
+```{r final-recommendations}
+# Extract key numbers for final recommendation
+variant_means <- data %>%
+  group_by(campaign_variant) %>%
+  summarise(
+    mean_spend = mean(campaign_spend),
+    n = n(),
+    total_revenue = sum(campaign_spend)
+  ) %>%
+  arrange(desc(mean_spend))
+
+cat("\nCampaign Variant Rankings by Average Spend:\n")
+print(variant_means)
+
+# Calculate revenue difference
+max_revenue_variant <- variant_means$campaign_variant[1]
+revenue_diff <- variant_means$mean_spend[1] - variant_means$mean_spend[3]
+pct_improvement <- (revenue_diff / variant_means$mean_spend[3]) * 100
+
+cat("\nBest Performing Variant:", as.character(max_revenue_variant), "\n")
+cat("Revenue improvement vs worst variant: $", round(revenue_diff, 2),
+    " (", round(pct_improvement, 1), "%)\n", sep = "")
+```
+
+---
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```

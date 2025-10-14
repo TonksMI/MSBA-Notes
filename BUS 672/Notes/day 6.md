@@ -1,156 +1,234 @@
-# Day 6 after first midterm
+# Day 6 Designing Static Dashboards and Reports
 
-## Data Model
+## Dashboards vs Data Stories vs Slide reports
 
-AN abstract representation of the structure and organization of data along with the rules for how that data is stored related and manipulated
+Framework for structuring Communication
 
-1 describing data
+- Static Dashboard Design
+- Report Structuring
+- Slide report
 
-2 constraining data
+## Questions to ask
 
-3 manipulating data
+1. Was it Effective?
+2. Do you trust it
+3. Did it help you act on something
 
-## Conceptual data model
+### Dashboard defined
 
-ER Data model
+Monitoring tool
 
-conceptual model represents data from teh viewpoint of the org independent of any technology that will be used to implement the model
+- Rearview mirror of the business
 
-Conceptual data model is about understanding the organization getting the database requirements right
+Designed for
 
-Conceptual schema
+- quick scanning
+- tracking KPI
 
-the output of the conceptual data modeling is called a conceptual schema
+Best for
 
-A sonceptual schema is a detailed technology independent specification
+- ongoing operational or executive monitoring
 
-agile
+### Types
 
-Product manager
+Static vs interactive
 
-Scrum Master
+often locked into a static state
 
-Team Manager
+### Monitoring
 
-Logical Data Model
+- High level KPIs
 
-A data model that is consistent and compatible with a specific type of database technology
+- category filters
 
-logical schema
+- Identify the worst
 
-the representation of a database for a particular data management technology
+### Diagnostic
 
-conceptual model ehat data and what relationships are needed
+- Drill down segmented views
 
-logical model how does this look in the type of database we are using
+## Dashboarding
 
-physical model is how it is implemented in the database
+tell a story and gleam insight off of the data shown
 
-### Objectives
+## Data Story defined
 
-## Concepts
+Narrative Driven
 
-### Relation
+- Guide teh readers step by step
 
-a named 2d table of data
+Includes
 
-relation - entity type
+- Context Conflixt Resolution
 
-relation in relational database <> relationship in er model
+Strong use of
 
-#### Properties
+- Annotations Sequencing Callouts
 
-six requirements
+Use numbers to persuade the arguement to people
 
-- it must have a unique name
-- Every attribute value must be atomic
-- every row must be unique
-- columns in tables must have unique names
-- the order of columns is irrelevant
-- the order of the rows are irrelevant
+Tell a story to get into it
 
-notation
+Usually includes a deepdives
 
-previously for text notation :
+## SCQA
 
-EMPLOYEE(EMPID,Name,Dept,Salary)
+Situation-> Complication -> Question -> Answer
 
-grpahical:
+Corporate storytelling structure to present logical persuasive arguements in business settings
 
-EMPLOYEE
+## Modified heros journey
 
-(in a box)
+Things were good on upwards tragectory before issue
 
-[EmpId|Name|Dept|Salary]
+Identified the issue
 
-#### Primary key
+We implemented fixes that we felt address the root causes ensuring
 
-an attribute or a combination of attributes that uniquely identifies each row in a relation
+Empirically there was irrefutable evidence that our solutions fixed the issue
 
-Primary key helps to find the record we need from database
+Our solution actually put us in a better position than before
 
-primary keys are underlined
+## Slide reports
 
-Note
+Dashboard X Story
 
-an entites identifier in an ER diagram may or may not be the same attributes that comprise the primary key for the relation and may be a combination
+Often used in
 
-Composite key
+- Consulting
 
-primary key that consists of more than one attribute
+- Executive Briefings
 
-underline identifiers
+Entails
 
-best practice to keep the ids at the start unless if the columns are logically grouped
+- Denser byt structured in slides with headlines
 
-##### Integrety Constraints
+Audience X Purpose Timing X who reads it
 
-Integrity constraints
+Execs managers Analysts
 
-rules that facilitate maintaining the accuracy and integrity of data in the database
+Monitoring Persuading Documenting
 
-Entity integrity constraint
+Quick View In-Depth Review Brief Readout
 
-a rule that states no primary key attribute can be null
+Its not which one is best overall but which one is best for context
 
-null value that indicates nothing in that 'cell'
+## Design Principles
 
-Referential integrity constraint
+Key KPIs Prioritize Top Left
 
-foreign keys
+Grouping
 
-#### Foreign key
+- Group related metrics
 
-a key in a relation as an attribute that serves as the primary key of another relation in the same database
+Clarity
 
-the foreign key is emphasized by using a dashed underline
+- Use whitespace for clarity
 
-in relation data model associations between tables are defined. through the use of foreign keys
+Consistency
 
-the link between the department and employee table is through DeptName
+- Units and scales are consistent
 
-This implies that before we insert a new row int he employee table the department for that employee must already exist in the department table
+## Data Stories
 
-referential integrity constraint
+Executive summary
 
-either each foreign key value must match a primary key value in another relation or the foreign key value must be null
+- Lead with an executive sumamry
 
-if it is boptional to have a foreign key it can be null
+1 sentence takeaway
 
-## Composite attributes
+- Every chart should have a 1-sentence takeaway
 
-split into multiple columns
+Include
 
-ERD has it as a composite
+- Context and recommendations
 
-relation has it as their own columns. keep only the parts of the attribute
+Sections Questions
 
-## Multivalued attributes
+- Organize into sections or questions
 
-split off into its own relation with the initial primary key and the split off attributes as the other primary key
+## Slide reports continued
 
-weak entites become their own relation with a primary and foreign key for refering to the strong entity
+MECE Logic
 
-many to many
+- Mutually Exclusive Collectively Exhaustive
 
-associative entity still holds but there is more
+Role of one
+
+- One message per slide
+
+- No duplicates
+
+Headline = Key insight
+
+- Every slide title should state the so what
+
+- Actually explain but short message
+
+Pyramid Principle
+
+- Insight -> Supporting evidence -> details
+
+### Common Pitfalls
+
+Data Puke
+
+- Too many metrics
+
+Art Project
+
+- Too pretty not functional
+
+KPI Overload
+
+- Too many indicators no prioritization
+
+- 3-5 KPIs max prioritize them
+
+### Medium -> Intent
+
+- Dashboard -> monitor
+
+  - Show day to day changes and KPIs
+
+  - Easy to asses
+
+  - Think about who is using this tool
+
+- Data Stories -> Persuade/figure out what happened
+
+  - Executives don't want this
+
+  - Provide when and how it happened
+
+  - More detailed then Slide report
+
+- Slide Reports -> Document/review goals
+
+  - Slide report plans to be 15 min long
+
+  - MECE principle slide deck
+
+  - Don't go too deep into it in the main slide deck and appendix slides
+
+  - Use metrics based on the audience
+
+  - Go to exec dashboards and figure out
+
+  - Use viewership metrics as  monthly weekly metrics
+
+  - Create sections for issue one 2 3
+
+Amazon
+
+- If you need more than 2 people
+
+- six page brief 20 min reading it absorb and understand
+
+- Need context of why
+
+All are interconnected and resonate the most with Good stuff we have done
+
+Think about time to delivery
+
+And context of the file
