@@ -1,0 +1,539 @@
+---
+title: "CPSC 540 Homework 1 – Weighted Campaign Analysis"
+author: "Matthew Tonks"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: false
+    theme: flatly
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 4.5
+)
+
+library(tidyverse)
+library(broom)
+library(MASS)         # glm.nb
+library(mgcv)         # gam
+library(performance)  # diagnostics
+library(car)          # Type-III ANOVA
+library(knitr)        # kable
+library(emmeans)      # marginal means
+library(effectsize)   # Cohen's d
+library(glue)
+
+set.seed(1818)
+options(contrasts = c("contr.sum", "contr.poly"))
+
+theme_set(
+  ggplot2::theme_minimal(base_family = "Helvetica", base_size = 12) +
+    theme(panel.grid.minor = element_blank())
+)
+
+readable_as_markdown <- function(title, items) {
+  glue::glue_collapse(
+    c(glue::glue("#### {title}"), "", glue::glue("- {items}")),
+    sep = "\n"
+  ) %>%
+    knitr::asis_output()
+}
+```
+
+## Assignment Context
+
+This report addresses Company X’s three-variant “Be Well” marketing campaign using the 5,000-customer dataset supplied for CPSC 540 Homework 1. The goal is to provide a decision-ready briefing for business stakeholders while documenting the full statistical workflow for academic review.
+
+## Data Preparation
+
+```{r data-prep}
+data_path <- "marketingcampaign.csv"
+
+campaign_data_raw <- readr::read_csv(data_path, show_col_types = FALSE)
+
+campaign_data <- campaign_data_raw %>%
+  mutate(
+    gender = factor(gender),
+    campaign_variant = factor(campaign_variant, levels = c("A", "B", "C")),
+    ad_source = factor(ad_source),
+    email_signup = factor(email_signup)
+  )
+
+weight_lookup <- campaign_data %>%
+  group_by(campaign_variant, email_signup) %>%
+  summarise(
+    n_customers = dplyr::n(),
+    sigma2 = stats::var(campaign_spend, na.rm = TRUE),
+    weight = 1 / (sigma2 + .Machine$double.eps),
+    .groups = "drop"
+  ) %>%
+  mutate(weight = weight / mean(weight))
+
+campaign_data <- campaign_data %>%
+  left_join(weight_lookup, by = c("campaign_variant", "email_signup"))
+
+stopifnot(!anyNA(campaign_data$weight))
+```
+
+```{r weight-summary}
+weight_lookup %>%
+  mutate(
+    sigma2 = round(sigma2, 2),
+    weight = round(weight, 6)
+  ) %>%
+  arrange(desc(weight)) %>%
+  kable(
+    caption = "Inverse-Variance Weights by Campaign Variant and Email Status",
+    col.names = c("Campaign Variant", "Email Signup", "Customers", "Variance (σ²)", "Normalized Weight (mean = 1)")
+  )
+```
+
+```{r descriptive-stats}
+descriptive_summary <- campaign_data %>%
+  summarise(
+    `Customers` = n(),
+    `Mean Age` = mean(age),
+    `Median Purchases` = median(past_purchases),
+    `Mean Purchases` = mean(past_purchases),
+    `Variance Purchases` = var(past_purchases),
+    `Mean Spend ($)` = mean(campaign_spend),
+    `Variance Spend` = var(campaign_spend)
+  ) %>%
+  mutate(across(where(is.numeric), ~round(.x, 2)))
+
+descriptive_summary %>%
+  kable(caption = "Overall Descriptive Statistics")
+```
+
+```{r eda-visuals, fig.cap="Distributions of past purchases and campaign spend across customers."}
+campaign_data %>%
+  pivot_longer(
+    cols = c(past_purchases, campaign_spend),
+    names_to = "metric",
+    values_to = "value"
+  ) %>%
+  ggplot(aes(x = value, fill = metric)) +
+  geom_histogram(bins = 30, alpha = 0.7, color = "white") +
+  facet_wrap(~metric, scales = "free") +
+  scale_fill_manual(values = c("#1f78b4", "#33a02c")) +
+  labs(
+    x = NULL,
+    y = "Number of Customers",
+    fill = NULL
+  ) +
+  theme(legend.position = "none")
+```
+
+## Analysis Strategy
+
+We analyze two business questions with models tailored to the outcome distribution and weighted by the inverse variance within each (campaign_variant, email_signup) cell. For count outcomes we expect overdispersion, so Negative Binomial (NB) models are preferred over Poisson. For campaign spend we use ANCOVA to compare variants while adjusting for customer characteristics that may influence spending.
+
+### Overdispersion Diagnostic for Purchases
+
+```{r overdispersion}
+overdispersion_check <- tibble(
+  Mean = mean(campaign_data$past_purchases),
+  Variance = var(campaign_data$past_purchases),
+  `Variance / Mean` = Variance / Mean
+) %>%
+  mutate(across(everything(), ~round(.x, 2)))
+
+overdispersion_check %>%
+  kable(caption = "Overdispersion Check for past_purchases")
+```
+
+```{r formal-overdispersion}
+poisson_reference <- glm(
+  past_purchases ~ age + email_signup + campaign_spend,
+  data = campaign_data,
+  family = poisson(link = "log"),
+  weights = weight
+)
+
+overdisp_obj <- performance::check_overdispersion(poisson_reference)
+
+overdisp_tbl <- tibble(
+  `Chi-Square` = overdisp_obj$chisq_statistic,
+  `Dispersion Ratio` = overdisp_obj$dispersion_ratio,
+  `Residual DF` = overdisp_obj$residual_df,
+  `p-value` = overdisp_obj$p_value
+) %>%
+  mutate(across(where(is.numeric), ~round(.x, 3)))
+
+overdisp_tbl %>%
+  kable(caption = "Formal Overdispersion Test for Poisson Reference Model")
+```
+
+The variance-to-mean ratio substantially exceeds one, and the formal diagnostic rejects equidispersion, justifying an NB specification. We compare NB models against a Poisson and a flexible GAM to confirm fit.
+
+## Results
+
+### Question 1: Drivers of Purchase Frequency
+
+```{r q1-models}
+model_q1_full <- glm.nb(
+  past_purchases ~ age + gender + email_signup + ad_source +
+    campaign_variant + campaign_spend,
+  data = campaign_data,
+  weights = weight
+)
+
+model_q1_simple <- glm.nb(
+  past_purchases ~ age + email_signup + campaign_spend,
+  data = campaign_data,
+  weights = weight
+)
+
+model_q1_poisson <- glm(
+  past_purchases ~ age + email_signup + campaign_spend,
+  family = poisson(link = "log"),
+  data = campaign_data,
+  weights = weight
+)
+
+model_q1_gam <- mgcv::gam(
+  past_purchases ~ s(age) + email_signup + s(campaign_spend),
+  family = nb(),
+  data = campaign_data,
+  weights = weight
+)
+```
+
+```{r q1-model-comparison}
+model_q1_aic <- tibble(
+  Model = c("Negative Binomial (Full)", "Negative Binomial (Simplified)", "Poisson", "GAM (NB)"),
+  AIC = c(
+    AIC(model_q1_full),
+    AIC(model_q1_simple),
+    AIC(model_q1_poisson),
+    AIC(model_q1_gam)
+  )
+) %>%
+  mutate(AIC = round(AIC, 1)) %>%
+  arrange(AIC)
+
+model_q1_aic %>%
+  kable(caption = "Model Comparison for past_purchases", align = "l")
+```
+
+The simplified NB specification provides the best balance of fit and parsimony, outperforming the Poisson model by over 2,000 AIC points and matching the GAM without the added complexity. We therefore report Incident Rate Ratios (IRR) from this specification.
+
+```{r q1-irr-table}
+irr_table <- tidy(model_q1_simple, conf.int = TRUE, exponentiate = TRUE) %>%
+  mutate(across(estimate:conf.high, ~round(.x, 3))) %>%
+  dplyr::select(term, estimate, conf.low, conf.high, p.value) %>%
+  mutate(p.value = round(p.value, 4))
+
+irr_table %>%
+  kable(
+    caption = "Weighted Incident Rate Ratios for past_purchases (Simplified NB Model)",
+    col.names = c("Term", "IRR", "Lower 95% CI", "Upper 95% CI", "p-value")
+  )
+```
+
+```{r q1-emm}
+emm_q1_email <- emmeans(model_q1_simple, ~ email_signup, type = "response")
+emm_q1_campaign <- emmeans(model_q1_full, ~ campaign_variant, type = "response")
+
+emm_q1_email_tbl <- emm_q1_email %>%
+  summary(infer = TRUE) %>%
+  as_tibble() %>%
+  mutate(across(where(is.numeric), ~round(.x, 2))) %>%
+  rename(
+    estimate = tidyselect::any_of(c("response", "rate", "emmean")),
+    lower = tidyselect::any_of(c("asymp.LCL", "lower.CL")),
+    upper = tidyselect::any_of(c("asymp.UCL", "upper.CL"))
+  ) %>%
+  dplyr::select(email_signup, estimate, lower, upper, p.value)
+
+emm_q1_campaign_tbl <- emm_q1_campaign %>%
+  summary(infer = TRUE) %>%
+  as_tibble() %>%
+  mutate(across(where(is.numeric), ~round(.x, 2))) %>%
+  rename(
+    estimate = tidyselect::any_of(c("response", "rate", "emmean")),
+    lower = tidyselect::any_of(c("asymp.LCL", "lower.CL")),
+    upper = tidyselect::any_of(c("asymp.UCL", "upper.CL"))
+  ) %>%
+  dplyr::select(campaign_variant, estimate, lower, upper, p.value)
+```
+
+```{r q1-emm-display}
+emm_q1_email_tbl %>%
+  kable(
+    caption = "Estimated Purchase Rates by Email Signup Status",
+    col.names = c("Email Signup", "Expected Purchases", "Lower 95% CI", "Upper 95% CI", "p-value")
+  )
+```
+
+```{r q1-emm-campaign-display}
+emm_q1_campaign_tbl %>%
+  kable(
+    caption = "Estimated Purchase Rates by Campaign Variant (Holding Other Drivers Constant)",
+    col.names = c("Campaign Variant", "Expected Purchases", "Lower 95% CI", "Upper 95% CI", "p-value")
+  )
+```
+
+```{r q1-visual, fig.cap="Weighted predicted purchase rates by email signup and campaign spend."}
+prediction_grid <- expand_grid(
+  email_signup = levels(campaign_data$email_signup),
+  campaign_spend = seq(min(campaign_data$campaign_spend), max(campaign_data$campaign_spend), length.out = 50),
+  age = mean(campaign_data$age)
+)
+
+prediction_grid <- prediction_grid %>%
+  mutate(predicted = predict(model_q1_simple, newdata = prediction_grid, type = "response"))
+
+prediction_grid %>%
+  ggplot(aes(x = campaign_spend, y = predicted, color = email_signup)) +
+  geom_line(linewidth = 1) +
+  scale_color_manual(values = c("#1f78b4", "#b2df8a")) +
+  labs(
+    x = "Campaign Spend ($)",
+    y = "Predicted Purchase Count",
+    color = "Email Signup"
+  )
+```
+
+```{r q1-diagnostics, fig.cap="Residual diagnostics for the simplified Negative Binomial model."}
+augmented_q1 <- augment(
+  model_q1_simple,
+  type.predict = "response",
+  type.residuals = "deviance"
+)
+
+ggplot(augmented_q1, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.4, color = "#1f78b4") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey50") +
+  labs(
+    x = "Fitted Values",
+    y = "Deviance Residuals",
+    title = NULL
+  )
+```
+
+### Business Interpretation for Question 1
+
+```{r q1-interpretation, results='asis'}
+email_irr <- irr_table %>%
+  filter(term == "email_signupTRUE") %>%
+  pull(estimate)
+
+email_change <- round((email_irr - 1) * 100, 1)
+email_p <- irr_table %>%
+  filter(term == "email_signupTRUE") %>%
+  pull(p.value)
+
+spend_change <- round((exp(10 * coef(model_q1_simple)["campaign_spend"]) - 1) * 100, 2)
+spend_p <- irr_table %>%
+  filter(term == "campaign_spend") %>%
+  pull(p.value)
+
+age_change <- round((exp(10 * coef(model_q1_simple)["age"]) - 1) * 100, 1)
+age_p <- irr_table %>%
+  filter(term == "age") %>%
+  pull(p.value)
+
+key_takeaways_q1 <- c(
+  glue("**Email signup behaves as a neutral signal**: subscribers average {round(emm_q1_email_tbl$estimate[emm_q1_email_tbl$email_signup == 'TRUE'], 1)} purchases vs. {round(emm_q1_email_tbl$estimate[emm_q1_email_tbl$email_signup == 'FALSE'], 1)} for non-subscribers ({ifelse(email_change >= 0, '+', '')}{email_change}%, IRR = {round(email_irr, 3)}, p = {scales::pvalue(email_p, accuracy = 0.001)})."),
+  glue("**Spending remains the clearest lever**: every additional $10 in campaign spend aligns with an estimated {ifelse(spend_change >= 0, '+', '')}{spend_change}% lift in expected purchases (p = {scales::pvalue(spend_p, accuracy = 1e-04)}), reinforcing cross-selling opportunities."),
+  glue("**Age skews activity toward younger customers**: each additional decade corresponds to a {ifelse(age_change >= 0, '+', '')}{age_change}% shift in purchase frequency (p = {scales::pvalue(age_p, accuracy = 1e-04)}), suggesting tailored re-engagement for older segments.")
+)
+
+readable_as_markdown("Question 1 Findings", key_takeaways_q1)
+```
+
+### Question 2: Campaign Variant Impact on Spend
+
+```{r q2-models}
+model_q2_simple <- lm(
+  campaign_spend ~ campaign_variant,
+  data = campaign_data,
+  weights = weight
+)
+
+model_q2_full <- lm(
+  campaign_spend ~ campaign_variant + age + gender + past_purchases +
+    email_signup + ad_source,
+  data = campaign_data,
+  weights = weight
+)
+
+model_q2_interaction <- lm(
+  campaign_spend ~ campaign_variant * (email_signup + past_purchases),
+  data = campaign_data,
+  weights = weight
+)
+```
+
+```{r q2-model-comparison}
+model_q2_aic <- tibble(
+  Model = c("Weighted ANCOVA", "Weighted Baseline", "Weighted Interaction"),
+  AIC = c(
+    AIC(model_q2_full),
+    AIC(model_q2_simple),
+    AIC(model_q2_interaction)
+  )
+) %>%
+  mutate(AIC = round(AIC, 1)) %>%
+  arrange(AIC)
+
+model_q2_aic %>%
+  kable(caption = "Model Comparison for campaign_spend", align = "l")
+```
+
+```{r q2-anova}
+anova_q2 <- car::Anova(model_q2_full, type = "III") %>%
+  as.data.frame() %>%
+  rownames_to_column("Term") %>%
+  mutate(across(where(is.numeric), ~round(.x, 3)))
+
+anova_q2 %>%
+  kable(caption = "Type III ANCOVA Results (Weighted)")
+```
+
+```{r q2-emmeans}
+emm_q2 <- emmeans(model_q2_full, ~ campaign_variant, weights = "proportional")
+emm_q2_tbl <- summary(emm_q2, infer = TRUE) %>%
+  as_tibble() %>%
+  mutate(across(where(is.numeric), ~round(.x, 2)))
+
+emm_q2_tbl %>%
+  dplyr::select(campaign_variant, emmean, lower.CL, upper.CL, p.value) %>%
+  kable(
+    caption = "Adjusted Mean Spend by Campaign Variant (Weighted)",
+    col.names = c("Campaign Variant", "Adjusted Mean ($)", "Lower 95% CI", "Upper 95% CI", "p-value")
+  )
+```
+
+```{r q2-tukey}
+model_q2_aov <- aov(
+  campaign_spend ~ campaign_variant + age + gender + past_purchases +
+    email_signup + ad_source,
+  data = campaign_data,
+  weights = weight
+)
+
+tukey_q2 <- TukeyHSD(model_q2_aov, which = "campaign_variant")
+
+tukey_q2_tbl <- tukey_q2$campaign_variant %>%
+  as.data.frame() %>%
+  rownames_to_column("Comparison") %>%
+  mutate(across(where(is.numeric), ~round(.x, 2)))
+
+tukey_q2_tbl %>%
+  kable(caption = "Tukey HSD Pairwise Comparisons (Weighted ANCOVA)")
+```
+
+```{r q2-cohens-d}
+pairwise_groups <- list(
+  "B vs A" = campaign_data %>% filter(campaign_variant %in% c("A", "B")),
+  "C vs A" = campaign_data %>% filter(campaign_variant %in% c("A", "C")),
+  "C vs B" = campaign_data %>% filter(campaign_variant %in% c("B", "C"))
+)
+
+cohens_d_results <- purrr::imap_dfr(
+  pairwise_groups,
+  ~ effectsize::cohens_d(
+    campaign_spend ~ campaign_variant,
+    data = .x,
+    weights = .x$weight
+  ) %>%
+    as_tibble() %>%
+    mutate(Comparison = .y)
+)
+
+cohens_d_results <- cohens_d_results %>%
+  mutate(
+    Magnitude = effectsize::interpret_cohens_d(Cohens_d, rules = "sawilowsky") %>%
+      as.character()
+  ) %>%
+  mutate(across(where(is.numeric), ~round(.x, 3))) %>%
+  dplyr::select(-CI) %>%
+  dplyr::select(Comparison, Cohens_d = Cohens_d, CI_low = CI_low, CI_high = CI_high, Magnitude)
+
+cohens_d_results %>%
+  kable(caption = "Weighted Cohen's d Effect Sizes by Campaign Variant Pair")
+```
+
+```{r q2-visual, fig.cap="Adjusted campaign spend by variant with 95% confidence intervals (weights applied)."}
+emm_q2_tbl %>%
+  ggplot(aes(x = campaign_variant, y = emmean, ymin = lower.CL, ymax = upper.CL, fill = campaign_variant)) +
+  geom_col(width = 0.6, color = "black", alpha = 0.8) +
+  geom_errorbar(width = 0.2, linewidth = 0.8) +
+  scale_fill_manual(values = c("#a6cee3", "#1f78b4", "#b2df8a")) +
+  labs(
+    x = "Campaign Variant",
+    y = "Adjusted Average Spend ($)",
+    fill = NULL
+  ) +
+  theme(legend.position = "none")
+```
+
+```{r q2-diagnostics, fig.cap="Weighted ANCOVA diagnostics: standardized residuals versus fitted values."}
+augmented_q2 <- augment(model_q2_full)
+
+ggplot(augmented_q2, aes(x = .fitted, y = .std.resid)) +
+  geom_point(alpha = 0.4, color = "#33a02c") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey50") +
+  labs(
+    x = "Fitted Values",
+    y = "Standardized Residuals",
+    title = NULL
+  )
+```
+
+### Business Interpretation for Question 2
+
+```{r q2-interpretation, results='asis'}
+incremental_value <- emm_q2_tbl$emmean[emm_q2_tbl$campaign_variant == "B"] -
+  emm_q2_tbl$emmean[emm_q2_tbl$campaign_variant == "A"]
+
+annualized_value <- incremental_value * 5000
+p_ba <- tukey_q2_tbl$p.adj[tukey_q2_tbl$Comparison == "B-A"]
+p_cb <- tukey_q2_tbl$p.adj[tukey_q2_tbl$Comparison == "C-B"]
+
+key_takeaways_q2 <- c(
+  glue("**Variant B delivers the highest weighted spend**: an adjusted mean of ${emm_q2_tbl$emmean[emm_q2_tbl$campaign_variant == 'B']} per customer, {round(incremental_value, 2)} dollars above the control (Variant A) with p = {scales::pvalue(p_ba, accuracy = 1e-04)}."),
+  glue("**Variant C trails Variant B** despite outperforming the control, and the Tukey test confirms the B–C difference (p = {scales::pvalue(p_cb, accuracy = 1e-04)})."),
+  glue("**Projected uplift**: rolling Variant B to all 5,000 customers yields an estimated additional revenue of ${format(round(annualized_value, 0), big.mark = ',')} versus the incumbent approach.")
+)
+
+readable_as_markdown("Question 2 Findings", key_takeaways_q2)
+```
+
+## Discussion
+
+```{r discussion, results='asis'}
+discussion_points <- c(
+  "**Practical applications:** Prioritize Variant B rollout, pair it with spend-based loyalty offers that reward incremental bundles, and craft rejuvenation messaging for older cohorts where purchase momentum fades.",
+  "**Limitations:** These insights derive from synthetic cross-sectional data; causal inferences are limited, and unmeasured attitudes (e.g., wellness goals) could confound both purchases and spend.",
+  "**Future enhancements:** A/B tests with uplift modeling, longitudinal tracking of cohort conversion, and explicit cost-benefit analysis of Variant B execution would solidify the business case."
+)
+
+readable_as_markdown("Strategic Discussion", discussion_points)
+```
+
+## Quality Checklist
+
+```{r checklist, results='asis'}
+checklist_items <- c(
+  "All models incorporate inverse-variance weights.",
+  "Negative Binomial selected after overdispersion diagnostics.",
+  "ANCOVA with Type-III inference adjusts for demographic covariates.",
+  "Pairwise Tukey HSD, effect sizes, and marginal means reported.",
+  "Figures and tables formatted for executive readability.",
+  "Reproducible pipeline: set.seed(1818) and documented packages."
+)
+
+readable_as_markdown("Verification Checklist", checklist_items)
+```

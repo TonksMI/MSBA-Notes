@@ -1,0 +1,291 @@
+M3 PRIMARY METALS - MASTER DATASET COLUMN DOCUMENTATION
+================================================================================
+
+Generated: 2025-10-29 19:27:29
+
+
+Target Variables (M3 Primary Metals) (16 columns)
+--------------------------------------------------------------------------------
+  - m3_FI
+  - m3_IS
+  - m3_MI
+  - m3_MPCFI
+  - m3_MPCMI
+  - m3_MPCNO
+  - m3_MPCTI
+  - m3_MPCUO
+  - m3_MPCVS
+  - m3_MPCWI
+  - m3_NO
+  - m3_TI
+  - m3_UO
+  - m3_US
+  - m3_VS
+  - m3_WI
+
+Original Features - Advance M3 (8 columns)
+--------------------------------------------------------------------------------
+  - advm3_MPCNO
+  - advm3_MPCTI
+  - advm3_MPCUO
+  - advm3_MPCVS
+  - advm3_NO
+  - advm3_TI
+  - advm3_UO
+  - advm3_VS
+
+Original Features - Construction (144 columns)
+--------------------------------------------------------------------------------
+  - const_00XX_MPCP
+  - const_00XX_MPCT
+  - const_00XX_MPCV
+  - const_01XX_MPCT
+  - const_01XX_MPCV
+  - const_02XX_MPCP
+  - const_02XX_MPCT
+  - const_02XX_MPCV
+  - const_03XX_MPCP
+  - const_03XX_MPCT
+  - const_03XX_MPCV
+  - const_04XX_MPCP
+  - const_04XX_MPCT
+  - const_04XX_MPCV
+  - const_05XX_MPCP
+  - const_05XX_MPCT
+  - const_05XX_MPCV
+  - const_06XX_MPCT
+  - const_06XX_MPCV
+  - const_07XX_MPCP
+  - const_07XX_MPCT
+  - const_08XX_MPCP
+  - const_08XX_MPCT
+  - const_08XX_MPCV
+  - const_09XX_MPCP
+  - const_09XX_MPCT
+  - const_09XX_MPCV
+  - const_10XX_MPCT
+  - const_10XX_MPCV
+  - const_11XX_MPCP
+  - const_11XX_MPCT
+  - const_11XX_MPCV
+  - const_12XX_MPCP
+  - const_12XX_MPCT
+  - const_13XX_MPCP
+  - const_13XX_MPCT
+  - const_14XX_MPCP
+  - const_14XX_MPCT
+  - const_15XX_MPCP
+  - const_15XX_MPCT
+  - const_20IX_MPCT
+  - const_20IX_MPCV
+  - const_A00XX_E_P
+  - const_A00XX_E_T
+  - const_A00XX_E_V
+  - const_A00XX_P
+  - const_A00XX_T
+  - const_A00XX_V
+  - const_A01XX_E_T
+  - const_A01XX_E_V
+  ... and 94 more
+
+Original Features - Retail (3 columns)
+--------------------------------------------------------------------------------
+  - retail_441
+  - retail_444
+  - retail_4441
+
+Original Features - Residential (21 columns)
+--------------------------------------------------------------------------------
+  - res_ACOMPLETIONS_E_MULTI
+  - res_ACOMPLETIONS_E_SINGLE
+  - res_ACOMPLETIONS_E_TOTAL
+  - res_ACOMPLETIONS_MULTI
+  - res_ACOMPLETIONS_SINGLE
+  - res_ACOMPLETIONS_TOTAL
+  - res_APERMITS_MULTI
+  - res_APERMITS_SINGLE
+  - res_APERMITS_TOTAL
+  - res_ASTARTS_E_MULTI
+  - res_ASTARTS_E_SINGLE
+  - res_ASTARTS_E_TOTAL
+  - res_ASTARTS_MULTI
+  - res_ASTARTS_SINGLE
+  - res_ASTARTS_TOTAL
+  - res_AUTHNOTSTD_MULTI
+  - res_AUTHNOTSTD_SINGLE
+  - res_AUTHNOTSTD_TOTAL
+  - res_UNDERCONST_MULTI
+  - res_UNDERCONST_SINGLE
+  - res_UNDERCONST_TOTAL
+
+Lagged Features (880 columns)
+--------------------------------------------------------------------------------
+  - advm3_MPCNO_lag1
+  - advm3_MPCNO_lag12
+  - advm3_MPCNO_lag2
+  - advm3_MPCNO_lag3
+  - advm3_MPCNO_lag6
+  - advm3_MPCTI_lag1
+  - advm3_MPCTI_lag12
+  - advm3_MPCTI_lag2
+  - advm3_MPCTI_lag3
+  - advm3_MPCTI_lag6
+  - advm3_MPCUO_lag1
+  - advm3_MPCUO_lag12
+  - advm3_MPCUO_lag2
+  - advm3_MPCUO_lag3
+  - advm3_MPCUO_lag6
+  - advm3_MPCVS_lag1
+  - advm3_MPCVS_lag12
+  - advm3_MPCVS_lag2
+  - advm3_MPCVS_lag3
+  - advm3_MPCVS_lag6
+  - advm3_NO_lag1
+  - advm3_NO_lag12
+  - advm3_NO_lag2
+  - advm3_NO_lag3
+  - advm3_NO_lag6
+  - advm3_TI_lag1
+  - advm3_TI_lag12
+  - advm3_TI_lag2
+  - advm3_TI_lag3
+  - advm3_TI_lag6
+  - advm3_UO_lag1
+  - advm3_UO_lag12
+  - advm3_UO_lag2
+  - advm3_UO_lag3
+  - advm3_UO_lag6
+  - advm3_VS_lag1
+  - advm3_VS_lag12
+  - advm3_VS_lag2
+  - advm3_VS_lag3
+  - advm3_VS_lag6
+  - const_00XX_MPCP_lag1
+  - const_00XX_MPCP_lag12
+  - const_00XX_MPCP_lag2
+  - const_00XX_MPCP_lag3
+  - const_00XX_MPCP_lag6
+  - const_00XX_MPCT_lag1
+  - const_00XX_MPCT_lag12
+  - const_00XX_MPCT_lag2
+  - const_00XX_MPCT_lag3
+  - const_00XX_MPCT_lag6
+  ... and 830 more
+
+Rolling Average Features (528 columns)
+--------------------------------------------------------------------------------
+  - advm3_MPCNO_ma12
+  - advm3_MPCNO_ma3
+  - advm3_MPCNO_ma6
+  - advm3_MPCTI_ma12
+  - advm3_MPCTI_ma3
+  - advm3_MPCTI_ma6
+  - advm3_MPCUO_ma12
+  - advm3_MPCUO_ma3
+  - advm3_MPCUO_ma6
+  - advm3_MPCVS_ma12
+  - advm3_MPCVS_ma3
+  - advm3_MPCVS_ma6
+  - advm3_NO_ma12
+  - advm3_NO_ma3
+  - advm3_NO_ma6
+  - advm3_TI_ma12
+  - advm3_TI_ma3
+  - advm3_TI_ma6
+  - advm3_UO_ma12
+  - advm3_UO_ma3
+  - advm3_UO_ma6
+  - advm3_VS_ma12
+  - advm3_VS_ma3
+  - advm3_VS_ma6
+  - const_00XX_MPCP_ma12
+  - const_00XX_MPCP_ma3
+  - const_00XX_MPCP_ma6
+  - const_00XX_MPCT_ma12
+  - const_00XX_MPCT_ma3
+  - const_00XX_MPCT_ma6
+  - const_00XX_MPCV_ma12
+  - const_00XX_MPCV_ma3
+  - const_00XX_MPCV_ma6
+  - const_01XX_MPCT_ma12
+  - const_01XX_MPCT_ma3
+  - const_01XX_MPCT_ma6
+  - const_01XX_MPCV_ma12
+  - const_01XX_MPCV_ma3
+  - const_01XX_MPCV_ma6
+  - const_02XX_MPCP_ma12
+  - const_02XX_MPCP_ma3
+  - const_02XX_MPCP_ma6
+  - const_02XX_MPCT_ma12
+  - const_02XX_MPCT_ma3
+  - const_02XX_MPCT_ma6
+  - const_02XX_MPCV_ma12
+  - const_02XX_MPCV_ma3
+  - const_02XX_MPCV_ma6
+  - const_03XX_MPCP_ma12
+  - const_03XX_MPCP_ma3
+  ... and 478 more
+
+Rate of Change Features (352 columns)
+--------------------------------------------------------------------------------
+  - advm3_MPCNO_mom_change
+  - advm3_MPCNO_yoy_change
+  - advm3_MPCTI_mom_change
+  - advm3_MPCTI_yoy_change
+  - advm3_MPCUO_mom_change
+  - advm3_MPCUO_yoy_change
+  - advm3_MPCVS_mom_change
+  - advm3_MPCVS_yoy_change
+  - advm3_NO_mom_change
+  - advm3_NO_yoy_change
+  - advm3_TI_mom_change
+  - advm3_TI_yoy_change
+  - advm3_UO_mom_change
+  - advm3_UO_yoy_change
+  - advm3_VS_mom_change
+  - advm3_VS_yoy_change
+  - const_00XX_MPCP_mom_change
+  - const_00XX_MPCP_yoy_change
+  - const_00XX_MPCT_mom_change
+  - const_00XX_MPCT_yoy_change
+  - const_00XX_MPCV_mom_change
+  - const_00XX_MPCV_yoy_change
+  - const_01XX_MPCT_mom_change
+  - const_01XX_MPCT_yoy_change
+  - const_01XX_MPCV_mom_change
+  - const_01XX_MPCV_yoy_change
+  - const_02XX_MPCP_mom_change
+  - const_02XX_MPCP_yoy_change
+  - const_02XX_MPCT_mom_change
+  - const_02XX_MPCT_yoy_change
+  - const_02XX_MPCV_mom_change
+  - const_02XX_MPCV_yoy_change
+  - const_03XX_MPCP_mom_change
+  - const_03XX_MPCP_yoy_change
+  - const_03XX_MPCT_mom_change
+  - const_03XX_MPCT_yoy_change
+  - const_03XX_MPCV_mom_change
+  - const_03XX_MPCV_yoy_change
+  - const_04XX_MPCP_mom_change
+  - const_04XX_MPCP_yoy_change
+  - const_04XX_MPCT_mom_change
+  - const_04XX_MPCT_yoy_change
+  - const_04XX_MPCV_mom_change
+  - const_04XX_MPCV_yoy_change
+  - const_05XX_MPCP_mom_change
+  - const_05XX_MPCP_yoy_change
+  - const_05XX_MPCT_mom_change
+  - const_05XX_MPCT_yoy_change
+  - const_05XX_MPCV_mom_change
+  - const_05XX_MPCV_yoy_change
+  ... and 302 more
+
+Time Features (7 columns)
+--------------------------------------------------------------------------------
+  - is_q1
+  - is_q2
+  - is_q3
+  - is_q4
+  - month
+  - quarter
+  - year

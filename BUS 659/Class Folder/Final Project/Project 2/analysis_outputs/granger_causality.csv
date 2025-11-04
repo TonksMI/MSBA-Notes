@@ -1,0 +1,5 @@
+Cause,Effect,Lag (months),p-value
+Housing Units,Construction Spending,1,0.0025613564388628687
+Housing Units,Manufacturing Orders,3,0.010683597727166516
+Manufacturing Orders,Construction Spending,1,0.011860359566168358
+Construction Spending,Manufacturing Orders,1,0.01255904076540231

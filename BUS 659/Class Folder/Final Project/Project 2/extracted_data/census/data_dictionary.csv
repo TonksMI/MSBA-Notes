@@ -1,0 +1,40 @@
+Column,Category,Description,Units,Type
+Finished_Goods_Inventory,M3 Primary Metals (Target),M3 Primary Metals - Finished Goods Inventory,Millions USD,Target Variable
+Inventory_Shipments_Ratio,M3 Primary Metals (Target),M3 Primary Metals - Inventory Shipments Ratio,Millions USD,Target Variable
+Materials_Supplies_Inventory,M3 Primary Metals (Target),M3 Primary Metals - Materials Supplies Inventory,Millions USD,Target Variable
+Pct_Change_Finished_Inventory,M3 Primary Metals (Target),M3 Primary Metals - Pct Change Finished Inventory,Percent Change,Target Variable
+Pct_Change_Materials_Inventory,M3 Primary Metals (Target),M3 Primary Metals - Pct Change Materials Inventory,Percent Change,Target Variable
+Pct_Change_New_Orders,M3 Primary Metals (Target),M3 Primary Metals - Pct Change New Orders,Percent Change,Target Variable
+Pct_Change_Total_Inventory,M3 Primary Metals (Target),M3 Primary Metals - Pct Change Total Inventory,Percent Change,Target Variable
+Pct_Change_Unfilled_Orders,M3 Primary Metals (Target),M3 Primary Metals - Pct Change Unfilled Orders,Percent Change,Target Variable
+Pct_Change_Shipments_Value,M3 Primary Metals (Target),M3 Primary Metals - Pct Change Shipments Value,Percent Change,Target Variable
+Pct_Change_WIP_Inventory,M3 Primary Metals (Target),M3 Primary Metals - Pct Change WIP Inventory,Percent Change,Target Variable
+New_Orders,M3 Primary Metals (Target),M3 Primary Metals - New Orders,Millions USD,Target Variable
+Total_Inventories,M3 Primary Metals (Target),M3 Primary Metals - Total Inventories,Millions USD,Target Variable
+Unfilled_Orders,M3 Primary Metals (Target),M3 Primary Metals - Unfilled Orders,Millions USD,Target Variable
+Unfilled_Shipments_Ratio,M3 Primary Metals (Target),M3 Primary Metals - Unfilled Shipments Ratio,Millions USD,Target Variable
+Value_of_Shipments,M3 Primary Metals (Target),M3 Primary Metals - Value of Shipments,Millions USD,Target Variable
+Work_In_Process_Inventory,M3 Primary Metals (Target),M3 Primary Metals - Work In Process Inventory,Millions USD,Target Variable
+Adv_Pct_Change_New_Orders,Advance M3,Advance Manufacturing - Adv Pct Change New Orders,Percent Change,Predictor
+Adv_Pct_Change_Total_Inventory,Advance M3,Advance Manufacturing - Adv Pct Change Total Inventory,Percent Change,Predictor
+Adv_Pct_Change_Unfilled_Orders,Advance M3,Advance Manufacturing - Adv Pct Change Unfilled Orders,Percent Change,Predictor
+Adv_Pct_Change_Shipments_Value,Advance M3,Advance Manufacturing - Adv Pct Change Shipments Value,Percent Change,Predictor
+Adv_New_Orders,Advance M3,Advance Manufacturing - Adv New Orders,Millions USD,Predictor
+Adv_Total_Inventories,Advance M3,Advance Manufacturing - Adv Total Inventories,Millions USD,Predictor
+Adv_Unfilled_Orders,Advance M3,Advance Manufacturing - Adv Unfilled Orders,Millions USD,Predictor
+Adv_Value_of_Shipments,Advance M3,Advance Manufacturing - Adv Value of Shipments,Millions USD,Predictor
+Total_Construction,Construction,Construction - Total Construction,Millions USD,Predictor
+Residential_Construction,Construction,Construction - Residential Construction,Millions USD,Predictor
+Private_Construction,Construction,Construction - Private Construction,Millions USD,Predictor
+Public_Construction,Construction,Construction - Public Construction,Millions USD,Predictor
+Motor_Vehicle_Parts_Dealers,Retail Sales,Retail Sales - Motor Vehicle Parts Dealers,Millions USD,Predictor
+Auto_Dealers,Retail Sales,Retail Sales - Auto Dealers,Millions USD,Predictor
+Other_Motor_Vehicle_Dealers,Retail Sales,Retail Sales - Other Motor Vehicle Dealers,Millions USD,Predictor
+Housing_Completions,Residential,Residential - Housing Completions,Units (thousands),Predictor
+Housing_Permits,Residential,Residential - Housing Permits,Units (thousands),Predictor
+Housing_Starts,Residential,Residential - Housing Starts,Units (thousands),Predictor
+Housing_Under_Construction,Residential,Residential - Housing Under Construction,Units (thousands),Predictor
+{Feature}_Lag{N}mo,Engineered - Lagged,"Lagged value N months ago (1, 2, 3, 6, 12)",Same as base feature,Predictor
+{Feature}_MA{N}mo,Engineered - Rolling Average,"N-month moving average (3, 6, 12)",Same as base feature,Predictor
+{Feature}_MoM_Growth,Engineered - Growth Rate,Month-over-month growth rate,Percentage,Predictor
+{Feature}_YoY_Growth,Engineered - Growth Rate,Year-over-year growth rate,Percentage,Predictor

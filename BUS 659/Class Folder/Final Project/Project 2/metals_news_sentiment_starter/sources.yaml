@@ -1,0 +1,28 @@
+# Edit/add sources to suit your coverage goals
+# Status as of 2025-10-27: Tested and verified
+rss:
+  # WORKING SOURCES (Verified 2025-10-27)
+  - https://feeds.a.dj.com/rss/RSSMarketsMain.xml    # WSJ Markets - WORKING (20 articles/day)
+  - https://www.ft.com/companies/mining?format=rss  # FT Mining - WORKING (25 articles/day)
+
+  # BROKEN/INACCESSIBLE SOURCES (Require authentication or broken feeds)
+  # - https://www.mining.com/feed/                   # Returns HTML instead of XML
+  # - https://www.kitco.com/news/index.rss           # Returns HTML instead of XML
+  # - https://www.reuters.com/markets/commodities/rss  # Requires JS/blocks bots
+  # - https://www.spglobal.com/commodityinsights/en/ci/products/metal-alerts.rss  # Returns HTML
+  # - https://www.marketwatch.com/feeds/marketwatch/commodities  # Returns HTML
+
+  # ALTERNATIVE WORKING SOURCES (Add as needed)
+  # Additional reliable feeds can be added here:
+  # - https://www.mining-technology.com/feed/
+  # - https://www.metalbulletin.com/rss  (may require subscription)
+
+seeds:
+  - https://www.ft.com/companies/mining
+  - https://www.wsj.com/news/markets/commodities
+  # Note: These seeds are for future crawling functionality
+  # Current implementation relies primarily on RSS + GDELT API
+
+# GDELT API is the primary source for broad coverage
+# Configuration: Automatically queries GDELT v2 API with metals/industry keywords
+# Status: WORKING (returns 10-250 articles per query depending on timespan)

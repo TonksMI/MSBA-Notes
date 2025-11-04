@@ -1,0 +1,8 @@
+Code,Industry,Steel_Relevance,Use_For
+331,Primary Metal Manufacturing,High - Direct,Steel production tracking
+3311,Iron and Steel Mills,High - Direct,Steel mill operations
+3312,Steel Product from Purchased Steel,High - Direct,Secondary steel processing
+332,Fabricated Metal Products,High - Consumer,Downstream steel demand
+333,Machinery Manufacturing,Medium - Consumer,Industrial equipment demand
+336,Transportation Equipment,High - Consumer,Auto/aerospace steel
+3361,Motor Vehicles,High - Consumer,Automotive steel demand

@@ -1,0 +1,2 @@
+source,url,published,title,headline_vader,finbert_neg,finbert_neu,finbert_pos,finbert_score,lang,match_metals,match_adjacent_industries
+Mining,https://www.ft.com/content/f9d4d34f-7402-46bb-a9ff-4e1c0f8393e0,2025-10-26T12:00:05+00:00,Australia’s iron ore riches challenged by green steel and African rival,0.4588,0.02455068938434124,0.9473445415496826,0.02810477651655674,0.0035540871322155,en,True,False

@@ -1,0 +1,58 @@
+# Taxonomy of the metals domain & adjacent industries
+metals:
+  - steel
+  - aluminum
+  - aluminium
+  - copper
+  - nickel
+  - zinc
+  - lead
+  - tin
+  - lithium
+  - cobalt
+  - iron ore
+  - stainless
+  - scrap
+  - billet
+  - rebar
+  - hot-rolled
+  - cold-rolled
+  - plate
+  - coil
+  - galvanized
+  - smelter
+  - refinery
+  - mine
+  - mining
+  - mill
+adjacent_industries:
+  - construction
+  - housing starts
+  - building permits
+  - automotive
+  - EV
+  - aerospace
+  - shipbuilding
+  - energy
+  - oil
+  - gas
+  - renewables
+  - wind
+  - solar
+  - transmission
+  - infrastructure
+  - manufacturing
+  - machinery
+  - rail
+  - trucking
+  - logistics
+  - supply chain
+  - tariffs
+  - sanctions
+  - PMI
+  - ISM
+  - factory orders
+  - capital goods
+  - durable goods
+  - china demand
+  - stimulus

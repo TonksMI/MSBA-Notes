@@ -1,0 +1,5 @@
+Code,Full_Name,Lead_Time,Units,Steel_Per_Unit
+PERMITS,Building Permits,4-6 months,Thousands,2.5 tons
+STARTS,Housing Starts,3-6 months,Thousands,2.5 tons
+UNDERCONST,Under Construction,1-3 months,Thousands,N/A
+COMP,Completions,Lagging,Thousands,N/A

@@ -1,0 +1,14 @@
+{
+  "creation_date": "2025-10-29T19:27:29.018855",
+  "total_rows": 127,
+  "total_columns": 1960,
+  "date_range_start": "2015-01-01 00:00:00",
+  "date_range_end": "2025-07-01 00:00:00",
+  "target_columns": 16,
+  "feature_columns_original": 176,
+  "lagged_features": 880,
+  "rolling_features": 528,
+  "change_features": 352,
+  "time_features": 8,
+  "total_engineered_features": 1767
+}

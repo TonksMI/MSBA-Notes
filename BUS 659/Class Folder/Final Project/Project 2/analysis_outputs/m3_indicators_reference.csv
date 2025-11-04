@@ -1,0 +1,10 @@
+Code,Full_Name,Type,Units,Use_For
+NO,New Orders,Leading,Millions $,Demand forecasting
+SM,Shipments Monthly,Coincident,Millions $,Current production
+UO,Unfilled Orders,Backlog,Millions $,Supply tightness
+TI,Total Inventories,Stock,Millions $,Supply chain health
+IS,Inventory to Shipments Ratio,Ratio,Months,Oversupply signal
+MI,Materials Inventory,Stock,Millions $,Raw material levels
+WI,Work in Process Inventory,Stock,Millions $,Production pipeline
+FI,Finished Goods Inventory,Stock,Millions $,Ready-to-ship stock
+MPCNO,Monthly % Change New Orders,Growth Rate,Percent,Momentum tracking

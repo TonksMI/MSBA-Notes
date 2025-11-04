@@ -1,0 +1,10 @@
+Priority,Indicator,Check_Frequency,Action_Threshold,Lead_Time
+Critical,M3 New Orders (NAICS 331),Monthly,>5% MoM change,1-2 months
+Critical,Housing Starts (Total),Monthly,>10% YoY change,3-6 months
+Critical,Auto Sales (MRTS 441),Monthly,>8% YoY change,2-3 months
+Important,Construction Spending (VIP C31),Monthly,>7% YoY change,2-4 months
+Important,Building Permits,Monthly,>12% YoY change,4-6 months
+Important,M3 Unfilled Orders (NAICS 331),Monthly,>15% YoY change,Concurrent
+Supporting,M3 Shipments,Monthly,>5% MoM change,Concurrent
+Supporting,Inventory/Shipments Ratio,Monthly,<1.2 or >1.6,Concurrent
+Supporting,ADVM3 New Orders,Monthly,>5% MoM change,5-day advance
